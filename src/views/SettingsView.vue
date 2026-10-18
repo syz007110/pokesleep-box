@@ -52,6 +52,17 @@ const themes: { id: ThemePreference; label: string }[] = [
 
     <section class="card form-card">
       <div class="field">
+        <label>{{ UI.settings.theme }}</label>
+        <div class="sheet-grid three">
+          <button v-for="theme in themes" :key="theme.id" class="choice" :class="{ active: s.theme === theme.id }" @click="settings.patch({ theme: theme.id })">
+            {{ theme.label }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card form-card">
+      <div class="field">
         <label>{{ UI.settings.island }}</label>
         <select class="select" :value="s.islandId" @change="settings.patch({ islandId: ($event.target as HTMLSelectElement).value })">
           <option v-for="island in ISLANDS" :key="island.shortName" :value="island.shortName">
@@ -62,11 +73,11 @@ const themes: { id: ThemePreference; label: string }[] = [
       <div class="field">
         <label>{{ UI.settings.favored }}</label>
         <p class="muted hint">{{ UI.settings.favoredHint }}</p>
-        <div class="sheet-grid">
+        <div class="chips wrap">
           <button
             v-for="berry in BERRIES"
             :key="berry.name"
-            class="choice"
+            class="chip"
             :class="{ active: s.favoredBerries.includes(berry.name) }"
             @click="toggleBerry(berry.name)"
           >
@@ -115,17 +126,6 @@ const themes: { id: ThemePreference; label: string }[] = [
     </section>
 
     <section class="card form-card">
-      <div class="field">
-        <label>{{ UI.settings.theme }}</label>
-        <div class="sheet-grid">
-          <button v-for="theme in themes" :key="theme.id" class="choice" :class="{ active: s.theme === theme.id }" @click="settings.patch({ theme: theme.id })">
-            {{ theme.label }}
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <section class="card form-card">
       <h2>{{ UI.settings.backup }}</h2>
       <button class="btn btn-primary" @click="onExport">{{ UI.settings.export }}</button>
       <label class="btn btn-ghost">
@@ -149,4 +149,6 @@ const themes: { id: ThemePreference; label: string }[] = [
 .hint { font-size: 12px; margin: 0; }
 .check { display: flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 650; }
 .check input { width: 22px; height: 22px; }
+.chips.wrap { flex-wrap: wrap; overflow: visible; }
+.three { grid-template-columns: repeat(3, 1fr); }
 </style>

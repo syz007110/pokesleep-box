@@ -65,6 +65,8 @@ img { max-width: 100%; }
 
 .page {
   min-height: 100%;
+  max-width: 430px;
+  margin: 0 auto;
   padding: calc(18px + var(--top)) 16px calc(var(--nav) + 24px);
 }
 
@@ -165,6 +167,10 @@ img { max-width: 100%; }
   padding: 2px 0 8px;
   scrollbar-width: none;
 }
+.chips.wrap {
+  overflow: visible;
+  flex-wrap: wrap;
+}
 .chips::-webkit-scrollbar { display: none; }
 .chip {
   min-height: 38px;
@@ -210,8 +216,10 @@ img { max-width: 100%; }
 
 .bottom-nav {
   position: fixed;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
   bottom: 0;
   height: var(--nav);
   padding: 8px 18px env(safe-area-inset-bottom);
