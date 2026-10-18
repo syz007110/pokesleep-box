@@ -5,7 +5,7 @@ import { listPokemon, removePokemon, upsertPokemon } from '../db'
 import { getNature, islandBerryNames, requirePokemon } from '../game/catalog'
 import { pokemonLabel, pokemonSearchBlob, matchesQuery } from '../i18n/names'
 import type { BoxPokemon, BoxSort, SpecialtyFilter } from '../models/types'
-import { emptyPokemon } from '../models/types'
+import { emptyPokemon, toPlainPokemon } from '../models/types'
 import { useSettingsStore } from './settings'
 
 export const useBoxStore = defineStore('box', () => {
@@ -21,11 +21,12 @@ export const useBoxStore = defineStore('box', () => {
   }
 
   async function save(pokemon: BoxPokemon) {
-    pokemon.updatedAt = Date.now()
-    await upsertPokemon(pokemon)
-    const idx = list.value.findIndex((p) => p.id === pokemon.id)
-    if (idx >= 0) list.value[idx] = pokemon
-    else list.value.unshift(pokemon)
+    const plain = toPlainPokemon({ ...pokemon, updatedAt: Date.now() })
+    const idx = list.value.findIndex((p) => p.id === plain.id)
+    if (idx >= 0) list.value[idx] = plain
+    else list.value.unshift(plain)
+    await upsertPokemon(plain)
+    return plain
   }
 
   async function remove(id: string) {

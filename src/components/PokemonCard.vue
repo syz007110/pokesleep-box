@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { BoxPokemon } from '../models/types'
 import { requirePokemon } from '../game/catalog'
 import { pokemonLabel, specialtyLabel, zh, NATURE_NAMES } from '../i18n/names'
@@ -10,8 +11,8 @@ import SpeciesAvatar from './SpeciesAvatar.vue'
 const props = defineProps<{ member: BoxPokemon }>()
 defineEmits<{ open: [] }>()
 const box = useBoxStore()
-const pokemon = requirePokemon(props.member.speciesId)
-const prod = box.productionFor(props.member)
+const pokemon = computed(() => requirePokemon(props.member.speciesId))
+const prod = computed(() => box.productionFor(props.member))
 </script>
 
 <template>

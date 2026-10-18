@@ -60,6 +60,28 @@ export interface BackupFile {
   settings: AppSettings
 }
 
+export function toPlainPokemon(pokemon: BoxPokemon): BoxPokemon {
+  return {
+    id: pokemon.id,
+    speciesId: pokemon.speciesId,
+    nickname: pokemon.nickname,
+    level: Number(pokemon.level),
+    natureId: pokemon.natureId,
+    subskills: [...pokemon.subskills].filter(Boolean),
+    ingredientIndexes: [
+      Number(pokemon.ingredientIndexes[0] ?? 0),
+      Number(pokemon.ingredientIndexes[1] ?? 0),
+      Number(pokemon.ingredientIndexes[2] ?? 0)
+    ],
+    skillLevel: Number(pokemon.skillLevel),
+    ribbon: Number(pokemon.ribbon),
+    extraCarry: Number(pokemon.extraCarry),
+    shiny: Boolean(pokemon.shiny),
+    createdAt: Number(pokemon.createdAt),
+    updatedAt: Number(pokemon.updatedAt)
+  }
+}
+
 export function emptyPokemon(partial: Pick<BoxPokemon, 'id' | 'speciesId'> & Partial<BoxPokemon>): BoxPokemon {
   const now = Date.now()
   return {

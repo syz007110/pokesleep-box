@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProductionPreview from '../components/ProductionPreview.vue'
 import { getNature, getPokemon, NATURES, requirePokemon, SUBSKILLS } from '../game/catalog'
@@ -7,24 +7,38 @@ import { BERRY_NAMES, INGREDIENT_NAMES, NATURE_NAMES, NATURE_STAT, SKILL_NAMES, 
 import { INGREDIENT_UNLOCKS, SUBSKILL_UNLOCKS, UI } from '../i18n/ui'
 import { MAX_POKEMON_LEVEL } from 'sleepapi-common'
 import { useBoxStore } from '../stores/box'
-import type { BoxPokemon } from '../models/types'
+import { toPlainPokemon, type BoxPokemon } from '../models/types'
 
 const route = useRoute()
 const router = useRouter()
 const box = useBoxStore()
+const busy = ref(false)
 
-const member = computed(() => box.list.find((p) => p.id === route.params.id))
+const member = computed(() => box.list.find((p) => p.id === String(route.params.id)))
 const form = reactive<BoxPokemon>(box.createDraft('PIKACHU'))
 const ready = computed(() => box.loaded && Boolean(member.value))
+
+function applyMember(row: BoxPokemon) {
+  const plain = toPlainPokemon(row)
+  form.id = plain.id
+  form.speciesId = plain.speciesId
+  form.nickname = plain.nickname
+  form.level = plain.level
+  form.natureId = plain.natureId
+  form.subskills = [...plain.subskills]
+  form.ingredientIndexes = [...plain.ingredientIndexes]
+  form.skillLevel = plain.skillLevel
+  form.ribbon = plain.ribbon
+  form.extraCarry = plain.extraCarry
+  form.shiny = plain.shiny
+  form.createdAt = plain.createdAt
+  form.updatedAt = plain.updatedAt
+}
 
 watch(
   member,
   (row) => {
-    if (!row) return
-    Object.assign(form, row, {
-      ingredientIndexes: [...row.ingredientIndexes] as [number, number, number],
-      subskills: [...row.subskills]
-    })
+    if (row) applyMember(row)
   },
   { immediate: true }
 )
@@ -55,22 +69,44 @@ function setSubskill(index: number, name: string) {
 }
 
 async function save() {
-  form.subskills = form.subskills.filter(Boolean)
-  await box.save({ ...form, ingredientIndexes: [...form.ingredientIndexes] as [number, number, number] })
-  router.push('/')
+  if (busy.value) return
+  busy.value = true
+  try {
+    form.subskills = form.subskills.filter(Boolean)
+    await box.save(toPlainPokemon(form))
+    await router.replace('/')
+  } finally {
+    busy.value = false
+  }
 }
 
 async function duplicate() {
-  const copy = box.createDraft(form.speciesId)
-  Object.assign(copy, form, { id: copy.id, nickname: form.nickname ? `${form.nickname} 副本` : '', createdAt: copy.createdAt })
-  await box.save(copy)
-  router.replace(`/pokemon/${copy.id}`)
+  if (busy.value) return
+  busy.value = true
+  try {
+    const copy = toPlainPokemon({
+      ...toPlainPokemon(form),
+      id: crypto.randomUUID(),
+      nickname: form.nickname ? `${form.nickname} 副本` : '',
+      createdAt: Date.now()
+    })
+    await box.save(copy)
+    await router.replace('/')
+  } finally {
+    busy.value = false
+  }
 }
 
 async function remove() {
+  if (busy.value) return
   if (!confirm('确定从盒子里删掉这只宝可梦？')) return
-  await box.remove(form.id)
-  router.push('/')
+  busy.value = true
+  try {
+    await box.remove(form.id)
+    await router.replace('/')
+  } finally {
+    busy.value = false
+  }
 }
 
 function natureNote(n: (typeof NATURES)[number]) {
@@ -167,9 +203,9 @@ function natureNote(n: (typeof NATURES)[number]) {
     <ProductionPreview :prod="prod" />
 
     <div class="actions">
-      <button class="btn btn-primary btn-block" @click="save">{{ UI.edit.save }}</button>
-      <button class="btn btn-ghost btn-block" @click="duplicate">{{ UI.edit.duplicate }}</button>
-      <button class="btn btn-danger btn-block" @click="remove">{{ UI.edit.delete }}</button>
+      <button class="btn btn-primary btn-block" :disabled="busy" @click="save">{{ UI.edit.save }}</button>
+      <button class="btn btn-ghost btn-block" :disabled="busy" @click="duplicate">{{ UI.edit.duplicate }}</button>
+      <button class="btn btn-danger btn-block" :disabled="busy" @click="remove">{{ UI.edit.delete }}</button>
     </div>
     <p class="muted hint">性格：{{ zh(NATURE_NAMES, nature.name) }} · {{ natureNote(nature) }}</p>
   </main>
