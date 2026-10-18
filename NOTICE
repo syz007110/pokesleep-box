@@ -1,0 +1,12 @@
+pokesleep-box
+Copyright 2026 pokesleep-box contributors
+
+This product includes software developed by The Neroli's Lab Authors
+(https://github.com/nerolis-lab/nerolis-lab), licensed under the Apache License,
+Version 2.0. See vendor/nerolis-lab/LICENSE and vendor/nerolis-lab/NOTICE.
+
+Chinese and Japanese game-term tables in src/i18n/names.ts include strings
+cross-checked against public Pokémon Sleep materials and, for personal use,
+the unlicensed name tables in bennyhe/pokeSleepCalc
+(https://github.com/bennyhe/pokeSleepCalc). Those tables are not redistributed
+verbatim; they were used as a reference when mapping Neroli's Lab ids.

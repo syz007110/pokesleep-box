@@ -1,0 +1,8 @@
+Chinese / Japanese game-term tables in this folder are keyed to Neroli's Lab ids
+(pokemon.name, berry.name, ingredient.name, nature.name, subskill.name, skill.name, island.shortName, recipe.name).
+
+They were compiled for personal use from:
+- Official Pokémon Sleep in-game names / wiki.pokesleep.com/zhs
+- Cross-check against Lab English ids
+- Reference lookup in bennyhe/pokeSleepCalc (src/i18n/lang/{cn,en,jp}/game.js), which has no license.
+  That project is NOT vendored; only Lab-id-keyed tables written for this app are included.
