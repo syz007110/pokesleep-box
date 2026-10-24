@@ -1,11 +1,22 @@
 Source: https://github.com/nerolis-lab/nerolis-lab
-Package: common/ (sleepapi-common)
-Original copy commit: b52bc32138ab834477b5cad70a25a952474f5f3a
-License: Apache-2.0
-Packed: 2026-10-24 as src/data/pack.json (version 2026.10.24-nl)
-Note: The full Lab TypeScript tree is not vendored. Only the packed
-offline catalog and Apache-2.0 notices are kept for personal use.
-UI restyle (2026-10-24) copies Lab visual tokens and information
-architecture patterns from frontend/src/assets/theme.ts and the
-calculator / Pokémon-input screens, implemented as original Vue
-components in this repo.
+License: Apache-2.0 (see LICENSE and NOTICE in this directory)
+Vendored commit: b52bc32138ab834477b5cad70a25a952474f5f3a
+Packed: 2026-10-24
+
+What was copied
+- frontend/src -> /src (tests and snapshots removed; local-mode patches
+  in src/local, src/router/server-axios.ts, and the login / settings /
+  recipe screens)
+- frontend/public -> /public
+- common/src -> third_party/nerolis-lab/common/src (tests removed)
+- backend/src simulation -> third_party/nerolis-lab/engine/src
+  (tests, database, routes, middleware, and controllers removed)
+
+Local changes vs upstream
+- POST /calculator/team and /calculator/iv run calculateTeam / calculateIv
+  in the browser (400 and 200 Monte Carlo iterations; upstream server
+  defaults are 5110 and 1400).
+- Pinia localStorage is mirrored to IndexedDB (neroli-pocket / kv).
+- Recipe levels, area bonus, and pot size work without an account.
+- OAuth, cloud sync, friends, notifications, admin, guides, and the
+  tier list page are not wired to a server.

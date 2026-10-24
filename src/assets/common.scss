@@ -1,0 +1,108 @@
+// flex
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-center-x {
+  display: flex;
+  align-items: center;
+}
+
+.flex-center-y {
+  display: flex;
+  justify-content: center;
+}
+
+.flex-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.flex-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.flex-top-left {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.flex-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flex-nowrap {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.v-btn {
+  font-size: 16px !important;
+  text-transform: none !important;
+}
+
+.grayscale {
+  filter: grayscale(100%);
+}
+
+// "EX" tag; see island-icon.vue for the .badge-overlay/.badge-anchor corner placement
+span.expert-chip.text-small {
+  flex: 0 0 auto;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  font-weight: 600 !important;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-shadow: none;
+}
+
+// same tag style as .expert-chip, for a setting that's been changed from its default
+span.custom-chip.text-small {
+  flex: 0 0 auto;
+  background: rgb(var(--v-theme-berry));
+  color: rgb(var(--v-theme-background));
+  font-weight: 600 !important;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-shadow: none;
+}
