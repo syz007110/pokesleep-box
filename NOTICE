@@ -1,11 +1,23 @@
 橙花口袋本（neroli-pocket / pokesleep-box）
 Copyright 2026 pokesleep-box contributors
 
-This product includes game data and production formulas derived from
-Neroli's Lab (https://github.com/nerolis-lab/nerolis-lab), licensed under
-the Apache License, Version 2.0. See third_party/nerolis-lab/LICENSE and
-third_party/nerolis-lab/NOTICE.
+This product includes Neroli's Lab
+(https://github.com/nerolis-lab/nerolis-lab), licensed under the Apache
+License, Version 2.0. See third_party/nerolis-lab/LICENSE,
+third_party/nerolis-lab/NOTICE, and third_party/nerolis-lab/SOURCE.txt.
 
-The application does not include Neroli's Lab backend, Google login, or
-the team solver. Packed Pokémon / berry / ingredient / skill tables live
-in src/data/pack.json for offline personal use.
+Vendored from that repository (commit recorded in VENDORED_SHA.txt):
+
+- frontend UI, adapted in src/ for on-device use
+- common/ as third_party/nerolis-lab/common (sleepapi-common)
+- the production simulation from backend/src as
+  third_party/nerolis-lab/engine (database, HTTP routes, controllers,
+  and workers omitted)
+- public sprites, fonts, and PWA icons
+
+The only architectural change is that team and IV simulation run in the
+browser, and user saves live in IndexedDB. There is no long-lived
+backend and no Google, Discord, or Patreon login for user data.
+
+Chakra Petch is SIL Open Font License 1.1. The font files ship in
+public/fonts/ as part of the Lab frontend public directory.

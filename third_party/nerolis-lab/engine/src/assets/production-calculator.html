@@ -1,0 +1,2501 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Sleep API</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pokemon Sleep Production Calculator | Sleep API</title>
+    <meta
+      name="description"
+      content="Simulate your Pokémon Sleep cooking with our Production Calculator. Strategize with detailed simulations and data analysis."
+    />
+    <meta property="og:title" content="Pokemon Sleep Production Calculator | Sleep API" />
+    <meta
+      property="og:description"
+      content="Simulate your Pokémon Sleep cooking with our Production Calculator. Strategize with detailed simulations and data analysis."
+    />
+    <meta property="og:image" content="https://api.sleepapi.net/sleepapi-thumbnail.png" />
+    <meta property="og:url" content="https://sleepapi.net" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://api.sleepapi.net/sleepapi-thumbnail.png" />
+    <link rel="icon" href="/cook.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/app.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="global.3.0.0.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css"
+    />
+
+    <style>
+      .bootstrap-select .btn:focus {
+        outline: none !important;
+      }
+
+      input.form-control:focus {
+        border-color: #f04545;
+        box-shadow: 0 0 0 0.25rem rgba(240, 69, 69, 0.25);
+      }
+
+      .dropdown-menu {
+        --bs-dropdown-link-active-bg: #f04545;
+      }
+
+      .dropdown-toggle {
+        white-space: normal;
+      }
+
+      .dropdown-label {
+        background: none;
+        padding: 0;
+      }
+
+      select,
+      option {
+        width: 300px;
+      }
+
+      /* chrome  */
+      input[type='range']::-webkit-slider-thumb {
+        background: #f04545;
+      }
+      input[type='range']::-webkit-slider-runnable-track {
+        background-color: #ddd;
+      }
+
+      /* firefox */
+      input[type='range']::-moz-range-thumb {
+        background: #f04545;
+      }
+      input[type='range']::-moz-range-track-track {
+        background-color: #ddd;
+      }
+
+      .form-switch .form-check-input:focus {
+        border-color: rgba(0, 0, 0, 0.25);
+        outline: 0;
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+      }
+      .form-switch .form-check-input:checked {
+        background-color: #f04545;
+        border-color: #f04545;
+        border: none;
+      }
+      .dropdown-item img {
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+
+      @media (min-width: 1000px) {
+        .max-width-custom {
+          max-width: 900px;
+        }
+      }
+
+      #chartContainer {
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      #chartContainer.show {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .card-header.btn {
+        --bs-btn-border-width: 0;
+      }
+
+      .pokemon-img {
+        width: 30%;
+        height: auto;
+        max-width: 100px;
+      }
+
+      .ingredient-img {
+        width: 10%;
+        height: auto;
+        max-width: 35px;
+      }
+
+      .custom-background {
+        background-color: #f5f5f5;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        height: calc(1.5em + 0.75rem + 2px);
+        padding: 0.375rem 0.75rem;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .card-body {
+        padding: 0.25rem 0.25rem;
+      }
+
+      .btn-group .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+
+      .dropdown-item.selected {
+        background-color: #f04545;
+        color: #f5f5f5;
+      }
+      .bootstrap-select .dropdown-toggle {
+        height: 40px;
+      }
+      .bootstrap-select .dropdown-toggle .filter-option {
+        text-align: center;
+        height: 90%;
+      }
+
+      #subskillsContainer .dropdown-menu .dropdown-item {
+        padding: var(--bs-dropdown-item-padding-y) 2px;
+        max-width: var(--input-width);
+      }
+
+      .skill-level-container .btn-outline-dark {
+        padding: 18px 10px;
+      }
+
+      .sleepapi-banner a.simple {
+        color: #daccf5;
+      }
+
+      .sleepapi-banner a.simple:visited {
+        color: #daccf5;
+      }
+
+      .sleepapi-banner a.simple:hover,
+      .sleepapi-banner a.simple:active {
+        color: #b9a0e9;
+      }
+    </style>
+
+    <script src="functions.3.0.0.js"></script>
+    <script src="charts/chart-utils.3.0.0.js"></script>
+    <script src="charts/charts.3.0.0.js"></script>
+    <script src="charts/comparison.3.0.0.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+      integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+
+    <script>
+      // updates the range slider values
+      function updateValue(slider) {
+        var output = document.getElementById(slider.id + 'Value');
+        output.innerHTML = slider.value;
+      }
+    </script>
+    <script>
+      // calls /api/pokemon when a pokemon is selected, so we may act on its ing list
+      $(document).ready(function () {
+        const pokemonSelect = document.getElementById('pokemon');
+
+        // if pokemon is populated after refresh
+        if (pokemonSelect.value) {
+          getPokemonData(pokemonSelect.value);
+        } else {
+          document.getElementById('ingredientDropdown').setAttribute('disabled', true);
+        }
+
+        // if pokemon is changed
+        document.getElementById('pokemon').addEventListener('change', function () {
+          var selectedPokemon = this.value;
+          if (selectedPokemon !== 'Pokémon') {
+            getPokemonData(selectedPokemon);
+          }
+        });
+      });
+    </script>
+    <script>
+      function populateIngredientOptions(ingredients) {
+        const $dropdownMenu = $('#ingredientOptions');
+        const $dropdownButton = $('#ingredientDropdown');
+        $dropdownMenu.empty();
+
+        ingredients.forEach((combination, index) => {
+          const listItem = $(
+            '<li><button class="dropdown-item text-center" type="button" style="width:300px"></button></li>'
+          );
+          const button = listItem.find('button');
+
+          combination.split('/').forEach((ingredient) => {
+            const imageUrl = `ingredient/${ingredient.toLowerCase()}.png`;
+            button.append(`<img src="${imageUrl}" alt="${ingredient}" style="width:30px; height:30px;">`);
+          });
+
+          button.attr('data-combination', combination);
+
+          listItem.on('click', function () {
+            $dropdownButton.html(button.html());
+            $dropdownButton.attr('data-combination', combination);
+            $dropdownButton.append('<span class="caret"></span>');
+          });
+
+          $dropdownMenu.append(listItem);
+
+          if (index < ingredients.length - 1) {
+            $dropdownMenu.append('<li><hr class="dropdown-divider"></li>');
+          }
+
+          if (index === 0) {
+            $dropdownButton.html(button.html());
+            $dropdownButton.attr('data-combination', combination);
+            $dropdownButton.append('<span class="caret"></span>');
+          }
+        });
+      }
+    </script>
+    <script>
+      function populateEvolutionData(nrOfEvolutions) {
+        // Set skill level
+        let radioButtonToCheck;
+        if (nrOfEvolutions === 0) {
+          radioButtonToCheck = document.getElementById('sl1');
+        } else if (nrOfEvolutions === 1) {
+          radioButtonToCheck = document.getElementById('sl2');
+        } else if (nrOfEvolutions === 2) {
+          radioButtonToCheck = document.getElementById('sl3');
+        }
+
+        if (radioButtonToCheck) {
+          radioButtonToCheck.checked = true;
+        }
+
+        // Set inventory from evolve
+        const selectElement = document.getElementById('nrOfEvolutions');
+        selectElement.disabled = false;
+        const options = selectElement.options;
+
+        for (let i = 0; i < options.length; i++) {
+          options[i].disabled = false;
+
+          const optionValue = parseInt(options[i].value, 10);
+
+          if (optionValue > nrOfEvolutions) {
+            options[i].disabled = true;
+          }
+
+          if (optionValue === nrOfEvolutions) {
+            options[i].selected = true;
+          }
+        }
+      }
+    </script>
+    <script>
+      $(document).ready(function () {
+        // remove disabled from submit button if pokemon and level chosen
+        function updateButtonState() {
+          var selectedPokemon = document.getElementById('pokemon').value;
+          var selectedLevel = [...document.querySelectorAll('input[name="level"]')].some((radio) => radio.checked);
+
+          if (selectedPokemon) {
+            document.getElementById('ingredientDropdown').removeAttribute('disabled');
+            if (selectedLevel) {
+              document.getElementById('submitButton').removeAttribute('disabled');
+            }
+          } else {
+            document.getElementById('ingredientDropdown').setAttribute('disabled', true);
+            document.getElementById('submitButton').setAttribute('disabled', true);
+          }
+        }
+
+        document.getElementById('pokemon').addEventListener('change', updateButtonState);
+
+        document.querySelectorAll('input[name="level"]').forEach((radio) => {
+          radio.addEventListener('change', updateButtonState);
+        });
+      });
+    </script>
+    <script>
+      // toggles collapsibles when header clicked
+      $(document).ready(function () {
+        const headers = document.querySelectorAll('.card-header[data-toggle="collapse"]');
+
+        headers.forEach((header) => {
+          header.addEventListener('click', function () {
+            const targetId = header.getAttribute('data-target');
+            const target = document.getElementById(targetId);
+
+            if (target.classList.contains('collapse')) {
+              target.classList.remove('collapse');
+            } else {
+              target.classList.add('collapse');
+            }
+          });
+        });
+      });
+    </script>
+    <script>
+      // Function to calculate sleep duration
+      $(document).ready(function () {
+        function calculateSleepDuration() {
+          const bedtimeInput = document.getElementById('mainBedtime');
+          const wakeupInput = document.getElementById('mainWakeup');
+          const sleepDurationOutput = document.getElementById('sleepDuration');
+
+          const bedtime = new Date(`1970-01-01T${bedtimeInput.value}:00`);
+          const wakeup = new Date(`1970-01-01T${wakeupInput.value}:00`);
+
+          let durationInMinutes = (wakeup.getTime() - bedtime.getTime()) / (1000 * 60);
+          if (durationInMinutes < 0) {
+            durationInMinutes += 24 * 60;
+          }
+
+          const hours = Math.floor(durationInMinutes / 60);
+          const minutes = durationInMinutes % 60;
+          sleepDurationOutput.textContent = `Sleep duration: ${hours}:${minutes.toFixed(0)}`;
+        }
+
+        document.getElementById('mainBedtime').addEventListener('input', calculateSleepDuration);
+        document.getElementById('mainWakeup').addEventListener('input', calculateSleepDuration);
+
+        calculateSleepDuration();
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        // Enable tooltips
+        $('[data-bs-toggle="tooltip"]').each(function () {
+          new bootstrap.Tooltip($(this), {
+            html: true
+          });
+
+          $(this).on('shown.bs.tooltip', function () {
+            const tooltipInnerEl = $('.tooltip.show .tooltip-inner');
+            if (tooltipInnerEl.length) {
+              tooltipInnerEl.css('max-width', '300px');
+            }
+          });
+        });
+
+        // Prevent default action and visual feedback on icon click
+        $('.fa-info-circle').on('click mousedown mouseup focus', function (event) {
+          event.stopPropagation();
+          event.preventDefault();
+        });
+      });
+    </script>
+    <script>
+      // initialize custom level popover and add focus toggle event listeners
+      $(document).ready(function () {
+        var options = {
+          html: true,
+          content: $('[data-name="popover-content"]'),
+          placement: 'auto',
+          popperConfig: {
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [65, 60]
+                }
+              }
+            ]
+          }
+        };
+
+        var exampleEl = document.getElementById('valueCustom');
+        var popover = new bootstrap.Popover(exampleEl, options);
+
+        $('#valueCustom').on('shown.bs.popover', function () {
+          $('.popover').find('#popoverInput').focus();
+        });
+
+        function closePopover() {
+          $(exampleEl).popover('hide');
+        }
+
+        exampleEl.addEventListener('click', function (e) {
+          e.stopPropagation();
+          $(exampleEl).popover('toggle');
+        });
+
+        $(document).on('click', function (e) {
+          if (!$(e.target).closest('#valueCustom').length && !$(e.target).closest('.popover').length) {
+            $(exampleEl).popover('hide');
+          }
+        });
+
+        $(document).on('click', '.popover', function (e) {
+          e.stopPropagation();
+        });
+
+        $(document).on('change', '#popoverInput', function (e) {
+          var value = e.target.value;
+          document.getElementById('customPopover').textContent = value;
+          document.getElementById('valueCustom').value = value;
+          $(exampleEl).popover('hide');
+        });
+      });
+    </script>
+    <script>
+      // appends level labels in subskill dropdown
+      $(document).ready(function () {
+        let levels = [10, 25, 50, 75, 100];
+        let selectedSubskills = [];
+        let selectedSubTexts = [];
+
+        // register change event
+        $('#subskills').on('changed.bs.select', function () {
+          const currentSelection = $(this).find('option:selected');
+
+          // if an option was unselected then we revert text and make level available again
+          if (currentSelection.length < selectedSubskills.length) {
+            const currentSelectionTexts = currentSelection
+              .map(function () {
+                return $(this).text();
+              })
+              .get();
+
+            // find index of removed subskill
+            const missingIndices = selectedSubskills
+              .map((s, index) => (!currentSelectionTexts.includes(s) ? index : -1))
+              .filter((index) => index !== -1);
+
+            // find the unselected options that we need to restore text for (replace level X with original text)
+            $('.dropdown-menu .inner li:not(.selected) a').each(function () {
+              const currentText = $(this).text();
+              missingIndices.forEach((index) => {
+                if (currentText.startsWith(selectedSubskills[index])) {
+                  $(this).find('span.text span.levelText').remove();
+                  selectedSubskills.splice(index, 1);
+                  selectedSubTexts.splice(index, 1);
+                }
+              });
+            });
+          }
+
+          // create all new texts for the selected subskills
+          var selectedTexts = currentSelection
+            .map(function () {
+              const thisSubskill = $(this).text();
+              const thisSubtext = $(this).data().subtext;
+
+              if (selectedSubskills.includes(thisSubskill)) {
+                return levels[selectedSubskills.indexOf(thisSubskill)];
+              } else {
+                selectedSubskills.push(thisSubskill);
+                selectedSubTexts.push(thisSubtext);
+                return levels[selectedSubskills.length - 1];
+              }
+            })
+            .get();
+
+          // update texts for selected subskills in the dropdown
+          $(this)
+            .parent()
+            .find('.dropdown-menu .inner .selected .text')
+            .each(function (index) {
+              $(this).find('span.levelText').remove();
+              var additionalText = $('<span></span>', {
+                text: ` [L${selectedTexts[index]}]`,
+                class: 'levelText'
+              });
+
+              $(this).append(additionalText);
+            });
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        var input = document.getElementById('popoverInput');
+
+        input.addEventListener('input', function () {
+          var value = parseInt(this.value, 10);
+
+          if (value > 100) {
+            this.value = 100;
+          } else if (value < 1) {
+            this.value = 1;
+          }
+        });
+      });
+    </script>
+    <script>
+      let selectedSubskills = [];
+      $(document).ready(function () {
+        // subskill selector
+        var selectPicker = document.getElementById('subskills');
+
+        // populate subskills at startup
+        const cachedSubskills = Array.from(selectPicker.options)
+          .filter((option) => option.selected)
+          .map((option) => {
+            selectedSubskills.push(option.value);
+          });
+
+        selectPicker.addEventListener('change', function () {
+          var currentSelectedValues = Array.from(this.options)
+            .filter((option) => option.selected)
+            .map((option) => option.value);
+          var newlySelectedValue = currentSelectedValues.filter((value) => !selectedSubskills.includes(value));
+          var newlyDeselectedValue = selectedSubskills.filter((value) => !currentSelectedValues.includes(value));
+
+          if (newlySelectedValue.length > 0) {
+            selectedSubskills.push(...newlySelectedValue);
+          } else if (newlyDeselectedValue.length > 0) {
+            selectedSubskills = selectedSubskills.filter((value) => !newlyDeselectedValue.includes(value));
+          }
+        });
+      });
+
+      function getCurrentSubskills() {
+        return selectedSubskills;
+      }
+    </script>
+    <script>
+      // unfocus search bar and scroll selects into view
+      $(document).ready(function () {
+        var blurState = false;
+        $('.selectpicker').on('show.bs.select', function () {
+          var $select = $(this);
+          var FOCUS_SEARCH_AFTER_MS = 500;
+          var MOBILE_WIDTH = 1000;
+
+          var onFocus = function () {
+            if (!blurState) {
+              $(this).blur();
+              blurState = true;
+              var platformTimeout = window.innerWidth <= MOBILE_WIDTH ? FOCUS_SEARCH_AFTER_MS : 50;
+              setTimeout(function () {
+                $('.bs-searchbox input').focus();
+                $('.bs-searchbox input').click();
+              }, platformTimeout);
+            }
+          };
+
+          $('.bs-searchbox .form-control').on('focus', onFocus);
+          $('.selectpicker').on('hide.bs.select', function () {
+            blurState = false;
+            $('.bs-searchbox .form-control').off('focus', onFocus);
+          });
+
+          setTimeout(() => {
+            if (window.innerWidth <= MOBILE_WIDTH) {
+              var buttonId = $select.attr('id');
+              var container = document.getElementById(`${buttonId}Container`);
+              if (container) {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+              }
+            }
+          }, 50);
+        });
+      });
+    </script>
+    <script data-goatcounter="https://stats.sleepapi.net/count" async src="//gc.zgo.at/count.js"></script>
+  </head>
+
+  <body>
+    <div
+      class="sleepapi-banner"
+      style="
+        position: relative;
+        background: url('./background.png') no-repeat center center;
+        background-size: cover;
+        color: #ffffff;
+        text-align: center;
+        padding: 10px 0 24px;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+      "
+    >
+      <img
+        class="neroli-home-banner-img"
+        src="./neroli-home.png"
+        alt=""
+        style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); height: 100px; z-index: 1"
+      />
+
+      <!-- Flexbox container for text and buttons -->
+      <div
+        style="
+          position: relative; /* Ensures the content stays above the image */
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap; /* Wraps on small screens */
+          max-width: 100%;
+          box-sizing: border-box;
+          flex-direction: column; /* Default: column for mobile */
+          z-index: 2;
+        "
+      >
+        <!-- Header text -->
+        <p style="margin: 10px 16px; font-size: 16px; text-align: center; max-width: 620px">
+          You may have noticed that this site has not been updated in a while. For all the latest Pokémon and mechanics,
+          please visit our new site which is actively maintained,
+          <a class="simple" href="https://nerolislab.com/?referrer=sleepAPI" target="_blank" rel="noopener noreferrer">
+            Neroli's Lab</a
+          >. We hope to see you there!
+        </p>
+        <p
+          style="
+            margin: 10px 16px;
+            font-size: 20px;
+            font-weight: normal;
+            text-align: center;
+            line-height: 1.35;
+            max-width: 620px;
+          "
+        >
+          <strong style="color: #e97612">Sleep API is retiring on January 1, 2027.</strong>
+          <br />Please move your bookmarks and workflows to Neroli's Lab.
+        </p>
+
+        <!-- Buttons container -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center">
+          <!-- Neroli's Lab button with logo -->
+          <a
+            href="https://nerolislab.com/?referrer=sleepAPI"
+            target="_blank"
+            style="
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+              color: #ffffff;
+              text-decoration: none;
+              background-color: #e63946;
+              border-radius: 8px;
+              font-weight: bold;
+              box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+              min-width: 150px;
+              height: 40px;
+              padding: 10px;
+              transition: transform 0.2s ease-in-out;
+            "
+            onmouseover="this.style.transform = 'scale(1.05)'"
+            onmouseout="this.style.transform = 'scale(1)'"
+          >
+            <img
+              src="./neroli-logo.png"
+              alt="Neroli Logo"
+              style="
+                width: 24px;
+                height: 24px;
+                display: inline-block;
+                border: 1px solid #403d58;
+                border-radius: 6px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+              "
+            />
+            Neroli's Lab
+          </a>
+
+          <!-- Discord button -->
+          <a
+            href="https://discord.gg/ejdkHGm3jP"
+            target="_blank"
+            style="
+              display: inline-flex;
+              justify-content: center;
+              align-items: center;
+              background-color: #5865f2;
+              padding: 10px;
+              border-radius: 8px;
+              font-size: 16px;
+              font-weight: bold;
+              box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+              width: 150px;
+              height: 40px;
+              overflow: hidden;
+              transition: transform 0.2s ease-in-out;
+              flex-shrink: 0;
+            "
+            onmouseover="this.style.transform = 'scale(1.05)'"
+            onmouseout="this.style.transform = 'scale(1)'"
+          >
+            <img src="./discord-logo-white.png" alt="Discord" style="width: auto; height: 20px" />
+          </a>
+        </div>
+      </div>
+
+      <!-- Responsive styling -->
+      <style>
+        @media (max-width: 825px) {
+          .neroli-home-banner-img {
+            display: none;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .responsive-container {
+            flex-direction: row; /* On larger screens, place text and buttons side by side */
+          }
+          .responsive-text {
+            margin-right: 20px; /* Add spacing to the right of the text */
+            text-align: left; /* Align text to the left */
+          }
+        }
+      </style>
+    </div>
+
+    <div class="topnav" id="topnavId">
+      <a href="index.html">Home</a>
+      <a class="active" href="production-calculator.html">Production Calculator</a>
+      <a href="team-finder.html">Team Finder</a>
+      <a href="tier-lists.html">Tier Lists</a>
+      <a href="javascript:void(0);" class="icon" onclick="showMenu()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
+
+    <header class="text-center mb-2">
+      <img id="sleepapi-icon" src="cook.png" alt="Sleep API icon" style="height: 100px; margin-top: 10px" />
+      <h1 style="margin: 0; color: #f5f5f5">
+        Production Calculator
+        <a
+          href="#collapseExample"
+          data-bs-toggle="collapse"
+          aria-expanded="false"
+          aria-controls="collapseExample"
+          style="text-decoration: none; color: currentColor"
+        >
+          <i class="fa fa-info-circle" style="color: #f5f5f5"></i>
+        </a>
+      </h1>
+      <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+          <h3>
+            The production calculator runs a simulation of a full day according to the currently known mechanics of
+            frequency, skills and energy.
+          </h3>
+          <br />
+          <h4>
+            We calculate produce using all relevant factors like the Pokémons frequency, estimated skill procs,
+            ingredient drop chance, carry size, nature and sub-skills.<br />
+            The calculator accounts for energy change. Such as sleep, natural decline, meal recovery and energy
+            skills.<br />
+            The entire 24 hour window should be as realisic as we can get. We provide the raw event log at the bottom
+            after submitting. Please reach out if you have any suggestions or issues. <br />
+            <br />
+
+            Every help contains the average amount of berries and ingredients, instead of only berries or only
+            ingredients.<br />
+            Every help's produce will be put into the Pokémon's inventory which later gets collected before it's full.
+            It also accurately accounts for spilled ingredients during the night. <br />
+            <br />
+
+            Skill procs are estimated using a Monte Carlo simulation for energy skills and regular
+            <code>frequency * skill%</code> for other skills. <br />
+            Energy skills need a more complex algorithm for estimating skill procs as the skill procs themselves
+            snowball into more skill procs. <br />
+            We calculate both the chance to store a nightly skill proc as well as estimated daily skill activations.<br />
+            After this we start each day with a fraction of a skill activation based on the chance that your mon stored
+            a nightly skill proc.<br />
+            After that we schedule the daily skill activations evenly throughout the day. <br />
+            We will schedule as many full skill activations as possible and finish with the final remaining fraction.
+            <br />
+            So for example for a Pokémon that is estimated to activate their skill 4.2 times per day we would schedule 4
+            full skill activations throughout the day and finish with a skill proc at the remaining 20% power.<br /><br />
+
+            The calculator defaults to 15.5 hours of daytime and 8.5 hours of sleep, but you can adjust this in the
+            advanced settings alongside other settings like Energy for Everyone procs.<br />
+
+            <br />
+            Output converted to sneaky snacking at night is included in the 24h berry output number.<br />
+            <br />
+            If you select more subskills than your chosen level allows it won't use the unavailable subskills.
+            <br />For example if you set level to 50 but choose 5 subskills only the first 3 will be calculated.<br /><br />
+
+            After the initial production calculation you can find a comparison between your selected Pokémon's
+            ingredient configuration and the other ingredient configurations this Pokémon can have (using the same
+            level/skill/nature). <br />
+            This is followed by graphs showing energy state, inventory management and skill activations over time.<br />At
+            the end you have a button, that lets you download the eventlog of this simulation in full.<br /><br />
+            You may also use the copy and paste button to share results in Discord or other places.
+          </h4>
+        </div>
+      </div>
+    </header>
+
+    <div class="d-flex align-items-center justify-content-center mb-2" id="pokemonContainer">
+      <select
+        class="selectpicker"
+        id="pokemon"
+        name="pokemon"
+        data-live-search="true"
+        data-live-search-placeholder="Search"
+        data-dropup-auto="false"
+        title="Pokémon"
+        data-width="300px"
+      >
+        <option value="" disabled hidden></option>
+        <option
+          value="ABOMASNOW"
+          data-subtext="ice - ingredients"
+          data-tokens="ingredient ice rawst evolved tomato egg mushroom"
+        >
+          Abomasnow
+        </option>
+        <option
+          value="ABSOL"
+          data-subtext="dark - ingredients"
+          data-tokens="ingredient dark wiki evolved cacao apple mushroom"
+        >
+          Absol
+        </option>
+        <option
+          value="AGGRON"
+          data-subtext="steel - ingredients"
+          data-tokens="ingredient steel belue sausage coffee soybean evolved"
+        >
+          Aggron
+        </option>
+        <option
+          value="ALTARIA"
+          data-subtext="dragon - berries"
+          data-tokens="berry dragon yache evolved egg soybean apple"
+        >
+          Altaria
+        </option>
+        <option value="AMPHAROS" data-subtext="electric - skills" data-tokens="skill electric grepa evolved herb egg">
+          Ampharos
+        </option>
+        <option
+          value="ARBOK"
+          data-subtext="poison - berries"
+          data-tokens="berry poison chesto evolved sausage egg herb"
+        >
+          Arbok
+        </option>
+        <option value="ARCANINE" data-subtext="fire - skills" data-tokens="skill fire leppa evolved herb sausage milk">
+          Arcanine
+        </option>
+        <option
+          value="ARON"
+          data-subtext="steel - ingredients"
+          data-tokens="ingredient steel belue sausage coffee soybean"
+        >
+          Aron
+        </option>
+        <option
+          value="BANETTE"
+          data-subtext="ghost - berries"
+          data-tokens="berry ghost bluk evolved oil ginger mushroom"
+        >
+          Banette
+        </option>
+        <option value="BAYLEEF" data-subtext="grass - berries" data-tokens="berry grass durin cacao honey leek">
+          Bayleef
+        </option>
+        <option
+          value="BELLSPROUT"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin tomato potato leek"
+        >
+          Bellsprout
+        </option>
+        <option
+          value="BEWEAR"
+          data-subtext="fighting - ingredients"
+          data-tokens="ingredient fighting cheri corn sausage egg evolved"
+        >
+          Bewear
+        </option>
+        <option
+          value="BLAZIKEN"
+          data-subtext="fighting - berries"
+          data-tokens="berry fighting cheri mushroom soybean oil evolved"
+        >
+          Blaziken
+        </option>
+        <option
+          value="BLASTOISE"
+          data-subtext="water - ingredients"
+          data-tokens="ingredient water oran milk cacao sausage evolved"
+        >
+          Blastoise
+        </option>
+        <option
+          value="BLISSEY"
+          data-subtext="normal - ingredients"
+          data-tokens="ingredient normal persim egg potato honey evolved"
+        >
+          Blissey
+        </option>
+        <option value="BONSLY" data-subtext="rock - skills" data-tokens="skill rock sitrus tomato soybean mushroom">
+          Bonsly
+        </option>
+        <option
+          value="BRAVIARY"
+          data-subtext="flying - skills"
+          data-tokens="skill flying pamtre sausage corn coffee evolved"
+        >
+          Braviary
+        </option>
+        <option
+          value="BULBASAUR"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin honey tomato potato"
+        >
+          Bulbasaur
+        </option>
+        <option
+          value="BUTTERFREE"
+          data-subtext="bug - berries"
+          data-tokens="berry bug lum honey tomato soybean evolved"
+        >
+          Butterfree
+        </option>
+        <option value="CATERPIE" data-subtext="bug - berries" data-tokens="berry bug lum honey tomato soybean">
+          Caterpie
+        </option>
+        <option
+          value="CHANSEY"
+          data-subtext="normal - ingredients"
+          data-tokens="ingredient normal persim egg potato honey"
+        >
+          Chansey
+        </option>
+        <option
+          value="CHARIZARD"
+          data-subtext="fire - ingredients"
+          data-tokens="ingredient fire leppa sausage ginger herb evolved"
+        >
+          Charizard
+        </option>
+        <option
+          value="CHARJABUG"
+          data-subtext="bug - ingredients"
+          data-tokens="ingredient bug lum coffee mushroom honey"
+        >
+          Charjabug
+        </option>
+        <option
+          value="CHARMANDER"
+          data-subtext="fire - ingredients"
+          data-tokens="ingredient fire leppa sausage ginger herb"
+        >
+          Charmander
+        </option>
+        <option
+          value="CHARMELEON"
+          data-subtext="fire - ingredients"
+          data-tokens="ingredient fire leppa sausage ginger herb"
+        >
+          Charmeleon
+        </option>
+        <option value="CHIKORITA" data-subtext="grass - berries" data-tokens="berry grass durin cacao honey leek">
+          Chikorita
+        </option>
+        <option
+          value="CLEFABLE"
+          data-subtext="fairy - berries"
+          data-tokens="berry fairy pecha apple honey soybean evolved"
+        >
+          Clefable
+        </option>
+        <option value="CLEFAIRY" data-subtext="fairy - berries" data-tokens="berry fairy pecha apple honey soybean">
+          Clefairy
+        </option>
+        <option value="CLEFFA" data-subtext="fairy - berries" data-tokens="berry fairy pecha apple honey soybean">
+          Cleffa
+        </option>
+        <option
+          value="CLODSIRE"
+          data-subtext="poison - ingredients"
+          data-tokens="ingredient poison chesto cacao coffee potato evolved"
+        >
+          Clodsire
+        </option>
+        <option
+          value="COMBUSKEN"
+          data-subtext="fighting - berries"
+          data-tokens="berry fighting cheri mushroom soybean oil"
+        >
+          Combusken
+        </option>
+        <option
+          value="COMFEY"
+          data-subtext="fairy - ingredients"
+          data-tokens="ingredient fairy pecha corn ginger cacao evolved"
+        >
+          Comfey
+        </option>
+        <option
+          value="CRAMORANT"
+          data-subtext="flying - ingredients"
+          data-tokens="ingredient flying pamtre oil potato egg evolved"
+        >
+          Cramorant
+        </option>
+        <option
+          value="CRESSELIA"
+          data-subtext="psychic - ingredients"
+          data-tokens="skill psychic mago ginger cacao tomato evolved"
+        >
+          Cresselia
+        </option>
+        <option value="CROAGUNK" data-subtext="poison - ingredients" data-tokens="ingredient poison chesto oil sausage">
+          Croagunk
+        </option>
+        <option
+          value="CROCALOR"
+          data-subtext="fire - ingredients"
+          data-tokens="ingredient fire leppa apple sausage herb"
+        >
+          Crocalor
+        </option>
+        <option value="CROCONAW" data-subtext="water - berries" data-tokens="berry water oran sausage oil">
+          Croconaw
+        </option>
+        <option value="CUBONE" data-subtext="ground - berries" data-tokens="berry ground figy ginger cacao">
+          Cubone
+        </option>
+        <option value="CYNDAQUIL" data-subtext="fire - berries" data-tokens="berry fire leppa ginger herb oil">
+          Cyndaquil
+        </option>
+        <option
+          value="DARKRAI"
+          data-subtext="dark - all"
+          data-tokens="skill berry ingredient all dark wiki sausage evolved"
+        >
+          Darkrai
+        </option>
+        <option
+          value="DEDENNE"
+          data-subtext="electric - skills"
+          data-tokens="skill electric grepa apple cacao corn evolved"
+        >
+          Dedenne
+        </option>
+        <option
+          value="DELIBIRD"
+          data-subtext="flying - ingredients"
+          data-tokens="ingredient flying pamtre oil apple cacao"
+        >
+          Delibird
+        </option>
+        <option
+          value="DIGLETT"
+          data-subtext="ground - ingredients"
+          data-tokens="ingredient ground figy tomato leek soybean"
+        >
+          Diglett
+        </option>
+        <option
+          value="DITTO"
+          data-subtext="normal - ingredients"
+          data-tokens="ingredient normal persim oil leek tail evolved"
+        >
+          Ditto
+        </option>
+        <option
+          value="DODRIO"
+          data-subtext="flying - berries"
+          data-tokens="berry flying pamtre soybean cacao sausage evolved"
+        >
+          Dodrio
+        </option>
+        <option value="DODUO" data-subtext="flying - berries" data-tokens="berry flying pamtre soybean cacao sausage">
+          Doduo
+        </option>
+        <option
+          value="DRAGONAIR"
+          data-subtext="dragon - ingredients"
+          data-tokens="ingredient dragon yache herb corn oil"
+        >
+          Dragonair
+        </option>
+        <option
+          value="DRAGONITE"
+          data-subtext="dragon - ingredients"
+          data-tokens="ingredient dragon yache herb corn oil evolved"
+        >
+          Dragonite
+        </option>
+        <option value="DRATINI" data-subtext="dragon - ingredients" data-tokens="ingredient dragon yache herb corn oil">
+          Dratini
+        </option>
+        <option value="DRIFBLIM" data-subtext="ghost - skills" data-tokens="skill ghost bluk corn oil potato evolved">
+          Drifblim
+        </option>
+        <option value="DRIFLOON" data-subtext="ghost - skills" data-tokens="skill ghost bluk corn oil potato">
+          Drifloon
+        </option>
+        <option
+          value="DUGTRIO"
+          data-subtext="ground - ingredients"
+          data-tokens="ingredient ground figy tomato leek soybean evolved"
+        >
+          Dugtrio
+        </option>
+        <option value="EEVEE" data-subtext="normal - skills" data-tokens="skill normal persim milk cacao sausage">
+          Eevee
+        </option>
+        <option
+          value="EEVEE_HOLIDAY"
+          data-subtext="normal - berries"
+          data-tokens="berry normal persim milk cacao sausage"
+        >
+          Eevee (Holiday)
+        </option>
+        <option value="EKANS" data-subtext="poison - berries" data-tokens="berry poison chesto sausage egg herb">
+          Ekans
+        </option>
+        <option value="ENTEI" data-subtext="fire - skills" data-tokens="skill fire leppa oil tomato mushroom evolved">
+          Entei
+        </option>
+        <option
+          value="ESPEON"
+          data-subtext="psychic - skills"
+          data-tokens="skill psychic mago milk cacao sausage evolved"
+        >
+          Espeon
+        </option>
+        <option
+          value="FARFETCHD"
+          data-subtext="flying - ingredients"
+          data-tokens="ingredient flying pamtre leek sausage ginger evolved"
+        >
+          Farfetch'd
+        </option>
+        <option value="FERALIGATR" data-subtext="water - berries" data-tokens="berry water oran sausage oil evolved">
+          Feraligatr
+        </option>
+        <option value="FLAAFFY" data-subtext="electric - skills" data-tokens="skill electric grepa herb egg">
+          Flaaffy
+        </option>
+        <option value="FLAREON" data-subtext="fire - skills" data-tokens="skill fire leppa milk cacao sausage evolved">
+          Flareon
+        </option>
+        <option
+          value="FLORAGATO"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin potato milk ginger"
+        >
+          Floragato
+        </option>
+        <option
+          value="FUECOCO"
+          data-subtext="fire - ingredients"
+          data-tokens="ingredient fire leppa apple sausage herb"
+        >
+          Fuecoco
+        </option>
+        <option
+          value="GALLADE"
+          data-subtext="fighting - skills"
+          data-tokens="skill fighting cheri apple corn leek evolved"
+        >
+          Gallade
+        </option>
+        <option
+          value="GARDEVOIR"
+          data-subtext="psychic - skills"
+          data-tokens="skill psychic mago apple corn leek evolved"
+        >
+          Gardevoir
+        </option>
+        <option value="GASTLY" data-subtext="ghost - ingredients" data-tokens="ingredient ghost bluk herb mushroom oil">
+          Gastly
+        </option>
+        <option
+          value="GENGAR"
+          data-subtext="ghost - ingredients"
+          data-tokens="ingredient ghost bluk herb mushroom oil evolved"
+        >
+          Gengar
+        </option>
+        <option
+          value="GEODUDE"
+          data-subtext="rock - ingredients"
+          data-tokens="ingredient rock sitrus soybean potato mushroom"
+        >
+          Geodude
+        </option>
+        <option value="GLACEON" data-subtext="ice - skills" data-tokens="skill ice rawst milk cacao sausage evolved">
+          Glaceon
+        </option>
+        <option
+          value="GOLDUCK"
+          data-subtext="water - skills"
+          data-tokens="skill water oran cacao apple sausage evolved"
+        >
+          Golduck
+        </option>
+        <option
+          value="GOLEM"
+          data-subtext="rock - ingredients"
+          data-tokens="ingredient rock sitrus soybean potato mushroom evolved"
+        >
+          Golem
+        </option>
+        <option
+          value="GRAVELER"
+          data-subtext="rock - ingredients"
+          data-tokens="ingredient rock sitrus soybean potato mushroom"
+        >
+          Graveler
+        </option>
+        <option value="GROWLITHE" data-subtext="fire - skills" data-tokens="skill fire leppa herb sausage milk">
+          Growlithe
+        </option>
+        <option value="GROVYLE" data-subtext="grass - skills" data-tokens="skill grass durin egg coffee leek">
+          Grovyle
+        </option>
+        <option value="GRUBBIN" data-subtext="bug - ingredients" data-tokens="ingredient bug lum coffee mushroom honey">
+          Grubbin
+        </option>
+        <option value="GULPIN" data-subtext="poison - skills" data-tokens="skill poison chesto soybean mushroom honey">
+          Gulpin
+        </option>
+        <option
+          value="HAPPINY"
+          data-subtext="normal - ingredients"
+          data-tokens="ingredient normal persim egg potato honey"
+        >
+          Happiny
+        </option>
+        <option
+          value="HAUNTER"
+          data-subtext="ghost - ingredients"
+          data-tokens="ingredient ghost bluk herb mushroom oil"
+        >
+          Haunter
+        </option>
+        <option
+          value="HERACROSS"
+          data-subtext="bug - skills"
+          data-tokens="skill bug lum honey mushroom sausage evolved"
+        >
+          Heracross
+        </option>
+        <option
+          value="HONCHKROW"
+          data-subtext="dark - skills"
+          data-tokens="skill dark wiki coffee soybean mushroom sausage herb evolved"
+        >
+          Honchkrow
+        </option>
+        <option value="HOUNDOOM" data-subtext="dark - berries" data-tokens="berry dark wiki herb ginger leek evolved">
+          Houndoom
+        </option>
+        <option value="HOUNDOUR" data-subtext="dark - berries" data-tokens="berry dark wiki herb ginger leek">
+          Houndour
+        </option>
+        <option value="IGGLYBUFF" data-subtext="fairy - skills" data-tokens="skill fairy pecha honey oil cacao">
+          Igglybuff
+        </option>
+        <option
+          value="IVYSAUR"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin honey tomato potato"
+        >
+          Ivysaur
+        </option>
+        <option value="JIGGLYPUFF" data-subtext="fairy - skills" data-tokens="skill fairy pecha honey oil cacao">
+          Jigglypuff
+        </option>
+        <option
+          value="JOLTEON"
+          data-subtext="electric - skills"
+          data-tokens="skill electric grepa milk cacao sausage evolved"
+        >
+          Jolteon
+        </option>
+        <option
+          value="KANGASKHAN"
+          data-subtext="normal - ingredients"
+          data-tokens="ingredient normal persim ginger potato soybean evolved"
+        >
+          Kangaskhan
+        </option>
+        <option value="KIRLIA" data-subtext="psychic - skills" data-tokens="skill psychic mago apple corn leek">
+          Kirlia
+        </option>
+        <option
+          value="LAIRON"
+          data-subtext="steel - ingredients"
+          data-tokens="ingredient steel belue sausage coffee soybean"
+        >
+          Lairon
+        </option>
+        <option
+          value="LARVITAR"
+          data-subtext="rock - ingredients"
+          data-tokens="ingredient rock sitrus ginger soybean sausage evolved"
+        >
+          Larvitar
+        </option>
+        <option
+          value="LEAFEON"
+          data-subtext="grass - skills"
+          data-tokens="skill grass durin milk cacao sausage evolved"
+        >
+          Leafeon
+        </option>
+        <option
+          value="LUCARIO"
+          data-subtext="fighting - skills"
+          data-tokens="skill fighting cheri oil potato egg evolved"
+        >
+          Lucario
+        </option>
+        <option
+          value="LUXIO"
+          data-subtext="electric - ingredients"
+          data-tokens="ingredient electric grepa tomato oil coffee"
+        >
+          Luxio
+        </option>
+        <option
+          value="LUXRAY"
+          data-subtext="electric - ingredients"
+          data-tokens="ingredient electric grepa tomato oil coffee evolved"
+        >
+          Luxray
+        </option>
+        <option value="MAGNEMITE" data-subtext="steel - skills" data-tokens="skill steel belue oil herb">
+          Magnemite
+        </option>
+        <option value="MAGNETON" data-subtext="steel - skills" data-tokens="skill steel belue oil herb">
+          Magneton
+        </option>
+        <option value="MAGNEZONE" data-subtext="steel - skills" data-tokens="skill steel belue oil herb evolved">
+          Magnezone
+        </option>
+        <option
+          value="MANKEY"
+          data-subtext="fighting - berries"
+          data-tokens="berry fighting cheri sausage mushroom honey"
+        >
+          Mankey
+        </option>
+        <option value="MAREEP" data-subtext="electric - skills" data-tokens="skill electric grepa herb egg">
+          Mareep
+        </option>
+        <option value="MAROWAK" data-subtext="ground - berries" data-tokens="berry ground figy ginger cacao evolved">
+          Marowak
+        </option>
+        <option value="MARSHTOMP" data-subtext="ground - berries" data-tokens="berry ground figy corn milk mushroom">
+          Marshtomp
+        </option>
+        <option
+          value="MAWILE"
+          data-subtext="steel - ingredients"
+          data-tokens="ingredient steel belue oil corn tomato potato"
+        >
+          Mawile
+        </option>
+        <option
+          value="MEGANIUM"
+          data-subtext="grass - berries"
+          data-tokens="berry grass durin evolved cacao honey leek"
+        >
+          Meganium
+        </option>
+        <option
+          value="MEOWSCARADA"
+          data-subtext="dark - ingredients"
+          data-tokens="ingredient dark wiki potato milk ginger"
+        >
+          Meowscarada
+        </option>
+        <option value="MEOWTH" data-subtext="normal - skills" data-tokens="skill normal persim milk sausage">
+          Meowth
+        </option>
+        <option value="METAPOD" data-subtext="bug - berries" data-tokens="berry bug lum honey tomato soybean">
+          Metapod
+        </option>
+        <option
+          value="MIME_JR"
+          data-subtext="psychic - ingredients"
+          data-tokens="ingredient psychic mago tomato potato leek"
+        >
+          Mime Jr.
+        </option>
+        <option value="MIMIKYU" data-subtext="ghost - skills" data-tokens="skill ghost apple coffee mushroom evolved">
+          Mimikyu
+        </option>
+        <option
+          value="MR_MIME"
+          data-subtext="psychic - ingredients"
+          data-tokens="ingredient psychic mago tomato potato leek evolved"
+        >
+          Mr. Mime
+        </option>
+        <option value="MUNNA" data-subtext="psychic - berries" data-tokens="berry psychic mago milk honey coffee">
+          Munna
+        </option>
+        <option
+          value="MURKROW"
+          data-subtext="dark - skills"
+          data-tokens="skill dark wiki coffee soybean mushroom sausage herb"
+        >
+          Murkrow
+        </option>
+        <option value="MUDKIP" data-subtext="water - berries" data-tokens="berry water oran corn milk mushroom">
+          Mudkip
+        </option>
+        <option
+          value="MUSHARNA"
+          data-subtext="psychic - berries"
+          data-tokens="berry psychic mago milk honey coffee evolved"
+        >
+          Musharna
+        </option>
+        <option value="NATU" data-subtext="psychic - berries" data-tokens="berry psychic mago egg cacao apple">
+          Natu
+        </option>
+        <option
+          value="NINETALES"
+          data-subtext="fire - berries"
+          data-tokens="berry fire leppa soybean corn potato evolved"
+        >
+          Ninetales
+        </option>
+        <option
+          value="NINETALES_ALOLAN"
+          data-subtext="ice - berries"
+          data-tokens="berry ice rawst soybean corn potato evolved"
+        >
+          Ninetales (alolan)
+        </option>
+        <option value="ONIX" data-subtext="rock - berries" data-tokens="berry rock sitrus tomato sausage potato">
+          Onix
+        </option>
+        <option value="PAWMI" data-subtext="electric - skills" data-tokens="skill eletric grepa cacao milk egg">
+          Pawmi
+        </option>
+        <option value="PAWMO" data-subtext="electric - skills" data-tokens="skill eletric grepa cacao milk egg">
+          Pawmo
+        </option>
+        <option
+          value="PAWMOT"
+          data-subtext="electric - skills"
+          data-tokens="skill eletric grepa cacao milk egg evolved"
+        >
+          Pawmot
+        </option>
+        <option value="PERSIAN" data-subtext="normal - skills" data-tokens="skill normal persim milk sausage evolved">
+          Persian
+        </option>
+        <option value="PICHU" data-subtext="electric - berries" data-tokens="berry electric grepa apple ginger egg">
+          Pichu
+        </option>
+        <option value="PIKACHU" data-subtext="electric - berries" data-tokens="berry electric grepa apple ginger egg">
+          Pikachu
+        </option>
+        <option
+          value="PIKACHU_HALLOWEEN"
+          data-subtext="electric - berries"
+          data-tokens="berry electric grepa evolved apple ginger egg"
+        >
+          Pikachu (Halloween)
+        </option>
+        <option
+          value="PIKACHU_HOLIDAY"
+          data-subtext="electric - skills"
+          data-tokens="skill electric grepa evolved apple ginger egg"
+        >
+          Pikachu (Holiday)
+        </option>
+        <option
+          value="PINSIR"
+          data-subtext="bug - ingredients"
+          data-tokens="ingredient bug lum honey apple sausage evolved"
+        >
+          Pinsir
+        </option>
+        <option value="PLUSLE" data-subtext="electric - skills" data-tokens="skill electric coffee leek milk evolved">
+          Plusle
+        </option>
+        <option
+          value="PRIMEAPE"
+          data-subtext="fighting - berries"
+          data-tokens="berry fighting cheri sausage mushroom honey evolved"
+        >
+          Primeape
+        </option>
+        <option value="PSYDUCK" data-subtext="water - skills" data-tokens="skill water oran cacao apple sausage">
+          Psyduck
+        </option>
+        <option
+          value="PUPITAR"
+          data-subtext="rock - ingredients"
+          data-tokens="ingredient rock sitrus ginger soybean sausage"
+        >
+          Pupitar
+        </option>
+        <option
+          value="QUAGSIRE"
+          data-subtext="water - ingredients"
+          data-tokens="ingredients water oran mushroom potato sausage evolved"
+        >
+          Quagsire
+        </option>
+        <option value="QUAXLY" data-subtext="water - ingredients" data-tokens="ingredient water oran soybean leek oil">
+          Quaxly
+        </option>
+        <option
+          value="QUAQUAVAL"
+          data-subtext="fighting - ingredients"
+          data-tokens="ingredient fighting cheri soybean leek oil"
+        >
+          Quaquaval
+        </option>
+        <option
+          value="QUAXWELL"
+          data-subtext="water - ingredients"
+          data-tokens="ingredient water oran soybean leek oil"
+        >
+          Quaxwell
+        </option>
+        <option value="QUILAVA" data-subtext="fire - berries" data-tokens="berry fire leppa ginger herb oil">
+          Quilava
+        </option>
+        <option
+          value="RAICHU"
+          data-subtext="electric - berries"
+          data-tokens="berry electric grepa apple ginger egg evolved"
+        >
+          Raichu
+        </option>
+        <option
+          value="RAIKOU"
+          data-subtext="electric - skills"
+          data-tokens="skill electric grepa sausage herb leek evolved"
+        >
+          Raikou
+        </option>
+        <option value="RALTS" data-subtext="psychic - skills" data-tokens="skill psychic mago apple corn leek">
+          Ralts
+        </option>
+        <option
+          value="RATICATE"
+          data-subtext="normal - berries"
+          data-tokens="berry normal persim apple soybean sausage evolved"
+        >
+          Raticate
+        </option>
+        <option value="RATTATA" data-subtext="normal - berries" data-tokens="berry normal persim apple soybean sausage">
+          Rattata
+        </option>
+        <option value="RIOLU" data-subtext="fighting - skills" data-tokens="skill fighting cheri oil potato egg">
+          Riolu
+        </option>
+        <option value="RUFFLET" data-subtext="flying - skills" data-tokens="skill flying pamtre sausage corn coffee">
+          Rufflet
+        </option>
+        <option value="SABLEYE" data-subtext="dark - skills" data-tokens="skill dark wiki oil mushroom cacao">
+          Sableye
+        </option>
+        <option value="SCEPTILE" data-subtext="grass - skills" data-tokens="skill grass durin egg coffee leek evolved">
+          Sceptile
+        </option>
+        <option value="SEALEO" data-subtext="ice - berries" data-tokens="berry ice rawst sausage oil ginger evolved">
+          Sealeo
+        </option>
+        <option
+          value="SHINX"
+          data-subtext="electric - ingredients"
+          data-tokens="ingredient electric grepa tomato oil coffee"
+        >
+          Shinx
+        </option>
+        <option value="SHUPPET" data-subtext="ghost - berries" data-tokens="berry ghost bluk oil ginger mushroom">
+          Shuppet
+        </option>
+        <option
+          value="SKELEDIRGE"
+          data-subtext="ghost - ingredients"
+          data-tokens="ingredient ghost bluk apple sausage herb"
+        >
+          Skeledirge
+        </option>
+        <option
+          value="SLAKING"
+          data-subtext="normal - berries"
+          data-tokens="berry normal persim tomato honey apple evolved"
+        >
+          Slaking
+        </option>
+        <option value="SLAKOTH" data-subtext="normal - berries" data-tokens="berry normal persim tomato honey apple">
+          Slakoth
+        </option>
+        <option value="SLOWBRO" data-subtext="water - skills" data-tokens="skill water oran cacao tail tomato evolved">
+          Slowbro
+        </option>
+        <option value="SLOWKING" data-subtext="water - skills" data-tokens="skill water oran cacao tail tomato evolved">
+          Slowking
+        </option>
+        <option value="SLOWPOKE" data-subtext="water - skills" data-tokens="skill water oran cacao tail tomato">
+          Slowpoke
+        </option>
+        <option value="SNEASEL" data-subtext="dark - berries" data-tokens="berry dark wiki sausage egg soybean">
+          Sneasel
+        </option>
+        <option value="SNOVER" data-subtext="ice - ingredients" data-tokens="ingredient ice rawst tomato egg mushroom">
+          Snover
+        </option>
+        <option value="SPHEAL" data-subtext="ice - berries" data-tokens="berry ice rawst sausage oil ginger">
+          Spheal
+        </option>
+        <option
+          value="SPRIGATITO"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin potato milk ginger"
+        >
+          Sprigatito
+        </option>
+        <option
+          value="SQUIRTLE"
+          data-subtext="water - ingredients"
+          data-tokens="ingredient water oran milk cacao sausage"
+        >
+          Squirtle
+        </option>
+        <option
+          value="STEELIX"
+          data-subtext="steel - berries"
+          data-tokens="berry steel belue tomato sausage potato evolved"
+        >
+          Steelix
+        </option>
+        <option
+          value="STUFFUL"
+          data-subtext="fighting - ingredients"
+          data-tokens="ingredient fighting cheri corn sausage egg"
+        >
+          Stufful
+        </option>
+        <option
+          value="SUDOWOODO"
+          data-subtext="rock - skills"
+          data-tokens="skill rock sitrus tomato soybean mushroom evolved"
+        >
+          Sudowoodo
+        </option>
+        <option value="SUICUNE" data-subtext="water - skills" data-tokens="skill water oran tail tail tail evolved">
+          Suicune
+        </option>
+        <option value="SWABLU" data-subtext="flying - berries" data-tokens="berry flying pamtre egg soybean apple">
+          Swablu
+        </option>
+        <option
+          value="SWALOT"
+          data-subtext="poison - skills"
+          data-tokens="skill poison chesto soybean mushroom honey evolved"
+        >
+          Swalot
+        </option>
+        <option
+          value="SWAMPERT"
+          data-subtext="ground - berries"
+          data-tokens="berry ground figy corn milk mushroom evolved"
+        >
+          Swampert
+        </option>
+        <option
+          value="SYLVEON"
+          data-subtext="fairy - skills"
+          data-tokens="skill fairy pecha milk cacao sausage evolved"
+        >
+          Sylveon
+        </option>
+        <option value="TOGEKISS" data-subtext="fairy - skills" data-tokens="skill fairy pecha egg ginger cacao evolved">
+          Togekiss
+        </option>
+        <option value="TOGEPI" data-subtext="fairy - skills" data-tokens="skill fairy pecha egg ginger cacao">
+          Togepi
+        </option>
+        <option value="TOGETIC" data-subtext="fairy - skills" data-tokens="skill fairy pecha egg ginger cacao">
+          Togetic
+        </option>
+        <option value="TORCHIC" data-subtext="fire - berries" data-tokens="berry fire leppa mushroom soybean oil">
+          Torchic
+        </option>
+        <option value="TOTODILE" data-subtext="water - berries" data-tokens="berry water oran sausage oil">
+          Totodile
+        </option>
+        <option value="TOXEL" data-subtext="poison - skills" data-tokens="skill poison chesto milk tomato leek">
+          Toxel
+        </option>
+        <option
+          value="TOXICROAK"
+          data-subtext="poison - ingredients"
+          data-tokens="ingredient poison chesto oil sausage evolved"
+        >
+          Toxicroak
+        </option>
+        <option value="TREECKO" data-subtext="grass - skills" data-tokens="skill grass durin egg coffee leek">
+          Treecko
+        </option>
+        <option
+          value="TOXTRICITY_AMPED"
+          data-subtext="poison - skills"
+          data-tokens="skill poison chesto milk tomato leek evolved"
+        >
+          Toxtricity (Amped Form)
+        </option>
+        <option value="TYPHLOSION" data-subtext="fire - berries" data-tokens="berry fire leppa ginger herb oil evolved">
+          Typhlosion
+        </option>
+        <option
+          value="TYRANITAR"
+          data-subtext="dark - ingredients"
+          data-tokens="ingredient dark wiki ginger soybean sausage evolved"
+        >
+          Tyranitar
+        </option>
+        <option value="UMBREON" data-subtext="dark - skills" data-tokens="skill dark wiki milk cacao sausage evolved">
+          Umbreon
+        </option>
+        <option
+          value="VAPOREON"
+          data-subtext="water - skills"
+          data-tokens="skill water oran milk cacao sausage evolved"
+        >
+          Vaporeon
+        </option>
+        <option
+          value="VENUSAUR"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin honey tomato potato evolved"
+        >
+          Venusaur
+        </option>
+        <option
+          value="VICTREEBEL"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin tomato potato leek evolved"
+        >
+          Victreebel
+        </option>
+        <option value="VIGOROTH" data-subtext="normal - berries" data-tokens="berry normal persim tomato honey apple">
+          Vigoroth
+        </option>
+        <option
+          value="VIKAVOLT"
+          data-subtext="bug - ingredients"
+          data-tokens="ingredient bug lum coffee mushroom honey evolved"
+        >
+          Vikavolt
+        </option>
+        <option value="VULPIX" data-subtext="fire - berries" data-tokens="berry fire leppa soybean corn potato">
+          Vulpix
+        </option>
+        <option value="VULPIX_ALOLAN" data-subtext="ice - berries" data-tokens="berry ice rawst soybean corn potato">
+          Vulpix (alolan)
+        </option>
+        <option value="WALREIN" data-subtext="ice - berries" data-tokens="berry ice rawst sausage oil ginger evolved">
+          Walrein
+        </option>
+        <option
+          value="WARTORTLE"
+          data-subtext="water - ingredients"
+          data-tokens="ingredient water oran milk cacao sausage"
+        >
+          Wartortle
+        </option>
+        <option value="WEAVILE" data-subtext="dark - berries" data-tokens="berry dark wiki sausage egg soybean evolved">
+          Weavile
+        </option>
+        <option
+          value="WEEPINBELL"
+          data-subtext="grass - ingredients"
+          data-tokens="ingredient grass durin tomato potato leek"
+        >
+          Weepinbell
+        </option>
+        <option
+          value="WIGGLYTUFF"
+          data-subtext="fairy - skills"
+          data-tokens="skill fairy pecha honey oil cacao evolved"
+        >
+          Wigglytuff
+        </option>
+        <option
+          value="WOBBUFFET"
+          data-subtext="psychic - skills"
+          data-tokens="skill psychic mago apple mushroom oil evolved"
+        >
+          Wobbuffet
+        </option>
+        <option
+          value="WOOPER"
+          data-subtext="water - ingredients"
+          data-tokens="ingredients water oran mushroom potato sausage"
+        >
+          Wooper
+        </option>
+        <option
+          value="WOOPER_PALDEAN"
+          data-subtext="poison - ingredients"
+          data-tokens="ingredients poison chesto cacao coffee potato"
+        >
+          Wooper (Paldean)
+        </option>
+        <option value="WYNAUT" data-subtext="psychic - skills" data-tokens="skill psychic mago apple mushroom oil">
+          Wynaut
+        </option>
+        <option value="XATU" data-subtext="psychic - berries" data-tokens="berry psychic mago egg cacao apple evolved">
+          Xatu
+        </option>
+      </select>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center mb-2" id="ingredientContainer">
+      <div class="dropdown">
+        <button
+          class="btn btn-outline-dark dropdown-toggle"
+          type="button"
+          id="ingredientDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          style="width: var(--input-width); height: 40px"
+          disabled
+        >
+          Ingredients
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="ingredientDropdown" id="ingredientOptions">
+          <!-- Dynamic content will be added here -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center mb-2" id="natureContainer">
+      <select
+        class="selectpicker"
+        id="nature"
+        name="nature"
+        title="Nature"
+        data-live-search="true"
+        data-live-search-placeholder="Search"
+        data-show-subtext="true"
+        data-dropup-auto="false"
+        data-width="300px"
+      >
+        <option value="bashful" disabled selected hidden>Choose Nature...</option>
+
+        <optgroup label="Speed">
+          <option value="lonely" data-subtext="+speed, -energy" data-tokens="speed">Lonely</option>
+          <option value="adamant" data-subtext="+speed -ingredient" data-tokens="speed">Adamant</option>
+          <option value="naughty" data-subtext="+speed -skill" data-tokens="speed">Naughty</option>
+          <option value="brave" data-subtext="+speed -exp" data-tokens="speed">Brave</option>
+        </optgroup>
+
+        <optgroup label="Ingredient">
+          <option value="modest" data-subtext="+ingredient -speed" data-tokens="ingredient">Modest</option>
+          <option value="mild" data-subtext="+ingredient -energy" data-tokens="ingredient">Mild</option>
+          <option value="rash" data-subtext="+ingredient -skill" data-tokens="ingredient">Rash</option>
+          <option value="quiet" data-subtext="+ingredient -exp" data-tokens="ingredient">Quiet</option>
+        </optgroup>
+
+        <optgroup label="Skill">
+          <option value="calm" data-subtext="+skill -speed" data-tokens="skill">Calm</option>
+          <option value="gentle" data-subtext="+skill -energy" data-tokens="skill">Gentle</option>
+          <option value="careful" data-subtext="+skill -ingredient" data-tokens="skill">Careful</option>
+          <option value="sassy" data-subtext="+skill -exp" data-tokens="skill">Sassy</option>
+        </optgroup>
+
+        <optgroup label="Energy">
+          <option value="bold" data-subtext="+energy -speed" data-tokens="energy">Bold</option>
+          <option value="impish" data-subtext="+energy -ingredient" data-tokens="energy">Impish</option>
+          <option value="lax" data-subtext="+energy -skill" data-tokens="energy">Lax</option>
+          <option value="relaxed" data-subtext="+energy -exp" data-tokens="energy">Relaxed</option>
+        </optgroup>
+
+        <optgroup label="EXP">
+          <option value="timid" data-subtext="+exp -speed" data-tokens="exp">Timid</option>
+          <option value="hasty" data-subtext="+exp -energy" data-tokens="exp">Hasty</option>
+          <option value="jolly" data-subtext="+exp -ingredient" data-tokens="exp">Jolly</option>
+          <option value="naive" data-subtext="+exp -skill" data-tokens="exp">Naive</option>
+        </optgroup>
+
+        <optgroup label="Neutral">
+          <option value="bashful" data-subtext="neutral" data-tokens="neutral">Bashful</option>
+          <option value="hardy" data-subtext="neutral" data-tokens="neutral">Hardy</option>
+          <option value="docile" data-subtext="neutral" data-tokens="neutral">Docile</option>
+          <option value="quirky" data-subtext="neutral" data-tokens="neutral">Quirky</option>
+          <option value="serious" data-subtext="neutral" data-tokens="neutral">Serious</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center mb-2" id="subskillsContainer">
+      <select
+        class="selectpicker"
+        id="subskills"
+        title="Sub-skills"
+        data-max-options="5"
+        data-width="300px"
+        data-tick-icon="false"
+        data-dropup-auto="false"
+        data-allow-clear="true"
+        multiple
+      >
+        <option value="Berry Finding S" title="BFS" data-subtext="+1 berry">Berry Finding S</option>
+        <option value="Helping Bonus" title="HB" data-subtext="+5% speed">Helping Bonus</option>
+        <option value="Energy Recovery Bonus" title="ERB" data-subtext="+14% energy">Energy Recovery Bonus</option>
+        <option data-divider="true"></option>
+        <option value="Helping Speed M" title="Help M" data-subtext="+14% speed">Helping Speed M</option>
+        <option value="Helping Speed S" title="Help S" data-subtext="+7% speed">Helping Speed S</option>
+        <option data-divider="true"></option>
+        <option value="Ingredient Finder M" title="Ing M" data-subtext="+36% ingredients">Ingredient Finder M</option>
+        <option value="Ingredient Finder S" title="Ing S" data-subtext="+18% ingredients">Ingredient Finder S</option>
+        <option data-divider="true"></option>
+        <option value="Skill Trigger M" title="Skill M" data-subtext="+36% skills">Skill Trigger M</option>
+        <option value="Skill Trigger S" title="Skill S" data-subtext="+18% skills">Skill Trigger S</option>
+        <option data-divider="true"></option>
+        <option value="Inventory Up L" title="Inv L" data-subtext="+18 inventory">Inventory Up L</option>
+        <option value="Inventory Up M" title="Inv M" data-subtext="+12 inventory">Inventory Up M</option>
+        <option value="Inventory Up S" title="Inv S" data-subtext="+6 inventory">Inventory Up S</option>
+        <option data-divider="true"></option>
+        <option value="Dream Shard Bonus" title="DSB" data-subtext="+6% shards" style="color: rgba(33, 37, 41, 0.4)">
+          Dream Shard Bonus
+        </option>
+        <option value="Research EXP Bonus" title="REB" data-subtext="+6% exp" style="color: rgba(33, 37, 41, 0.4)">
+          Research EXP Bonus
+        </option>
+        <option value="Skill Level Up M" title="SLM" data-subtext="+2 levels" style="color: rgba(33, 37, 41, 0.4)">
+          Skill Level Up M
+        </option>
+        <option value="Skill Level Up S" title="SLS" data-subtext="+1 levels" style="color: rgba(33, 37, 41, 0.4)">
+          Skill Level Up S
+        </option>
+        <option value="Sleep EXP Bonus" title="SEB" data-subtext="+14% exp" style="color: rgba(33, 37, 41, 0.4)">
+          Sleep EXP Bonus
+        </option>
+      </select>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center mb-2" id="levelContainer">
+      <div class="btn-group" role="group" aria-label="Level Selection" style="width: var(--input-width); height: 40px">
+        <input type="radio" class="btn-check" autocomplete="off" disabled />
+        <label class="btn btn-outline-dark" style="width: 20%; flex: 0 0 20%">Level</label>
+
+        <input type="radio" class="btn-check" name="level" id="value10" value="10" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="value10">10</label>
+
+        <input type="radio" class="btn-check" name="level" id="value25" value="25" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="value25">25</label>
+
+        <input type="radio" class="btn-check" name="level" id="value30" value="30" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="value30">30</label>
+
+        <input type="radio" class="btn-check" name="level" id="value50" value="50" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="value50">50</label>
+
+        <input type="radio" class="btn-check" name="level" id="value60" value="60" autocomplete="off" checked />
+        <label class="btn btn-outline-dark" for="value60">60</label>
+
+        <div hidden>
+          <div data-name="popover-content">
+            <input type="number" class="form-control" name="level" id="popoverInput" placeholder="Enter level" />
+          </div>
+        </div>
+
+        <input type="radio" class="btn-check" name="level" id="valueCustom" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="valueCustom" id="customPopover" title="Custom Level">+</label>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center mb-3 skill-level-container" id="skillLevelContainer">
+      <div
+        class="btn-group"
+        role="group"
+        aria-label="Skill Level Selection"
+        style="width: var(--input-width); height: 40px"
+      >
+        <input type="radio" class="btn-check" autocomplete="off" disabled />
+        <label class="btn btn-outline-dark" style="padding: 0px 2px; width: 20%; flex: 0 0 20%">Skill Lv.</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl1" value="1" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl1">1</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl2" value="2" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl2">2</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl3" value="3" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl3">3</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl4" value="4" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl4">4</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl5" value="5" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl5">5</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl6" value="6" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl6">6</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl7" value="7" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl7">7</label>
+
+        <input type="radio" class="btn-check" name="skillLevel" id="sl8" value="8" autocomplete="off" />
+        <label class="btn btn-outline-dark" for="sl8">8</label>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-center mb-3">
+      <a
+        class="btn btn-outline-dark"
+        data-bs-toggle="collapse"
+        href="#advancedSettings"
+        role="button"
+        aria-expanded="false"
+        aria-controls="advancedSettings"
+      >
+        Advanced settings <i class="fa fa-caret-down"></i>
+      </a>
+    </div>
+
+    <div class="collapse" id="advancedSettings">
+      <div class="card card-body" style="display: block; text-align: center">
+        <h5 class="mt-2 mb-3">Pokémon settings</h5>
+
+        <div class="d-flex align-items-center justify-content-center mb-2" id="nrOfEvolutionsContainer">
+          <select
+            id="nrOfEvolutions"
+            class="btn btn-outline-dark"
+            style="width: var(--input-width); height: 40px"
+            disabled
+          >
+            <option value="" disabled selected hidden>[Deprecated] Times evolved by user</option>
+            <option value="0">0 evolutions: no bonus</option>
+            <option value="1">1 evolution: no bonus</option>
+            <option value="2">2 evolutions: no bonus</option>
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center mb-2">
+          <select id="ribbonLevel" class="btn btn-outline-dark" style="width: var(--input-width); height: 40px">
+            <option value="0" selected>No ribbon</option>
+            <option value="1">Ribbon 1 (200 hours)</option>
+            <option value="2">Ribbon 2 (500 hours)</option>
+            <option value="3">Ribbon 3 (1000 hours)</option>
+            <option value="4">Ribbon 4 (2000 hours)</option>
+          </select>
+        </div>
+
+        <hr />
+
+        <h5 class="mt-2 mb-3">Team settings</h5>
+
+        <div class="d-flex align-items-center justify-content-center mb-3">
+          <div
+            class="btn-group"
+            role="group"
+            aria-label="Helping Bonus Selection"
+            style="width: var(--input-width); height: 40px"
+          >
+            <input type="radio" class="btn-check" autocomplete="off" disabled />
+            <label class="btn btn-outline-dark" style="width: 45%; flex: 0 0 45%; line-height: 1.2"
+              >Helping bonus</label
+            >
+
+            <input type="radio" class="btn-check" name="helpingBonus" id="hb0" value="0" autocomplete="off" checked />
+            <label class="btn btn-outline-dark" for="hb0">0</label>
+
+            <input type="radio" class="btn-check" name="helpingBonus" id="hb1" value="1" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="hb1">1</label>
+
+            <input type="radio" class="btn-check" name="helpingBonus" id="hb2" value="2" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="hb2">2</label>
+
+            <input type="radio" class="btn-check" name="helpingBonus" id="hb3" value="3" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="hb3">3</label>
+
+            <input type="radio" class="btn-check" name="helpingBonus" id="hb4" value="4" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="hb4">4</label>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center mb-3">
+          <div
+            class="btn-group"
+            role="group"
+            aria-label="Energy Recovery Bonus Selection"
+            style="width: var(--input-width); height: 40px"
+          >
+            <input type="radio" class="btn-check" autocomplete="off" disabled />
+            <label class="btn btn-outline-dark" style="width: 45%; flex: 0 0 45%; line-height: 1.2"
+              >Energy Recovery Bonus</label
+            >
+
+            <input type="radio" class="btn-check" name="erb" id="erb0" value="0" autocomplete="off" checked />
+            <label class="btn btn-outline-dark" for="erb0">0</label>
+
+            <input type="radio" class="btn-check" name="erb" id="erb1" value="1" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="erb1">1</label>
+
+            <input type="radio" class="btn-check" name="erb" id="erb2" value="2" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="erb2">2</label>
+
+            <input type="radio" class="btn-check" name="erb" id="erb3" value="3" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="erb3">3</label>
+
+            <input type="radio" class="btn-check" name="erb" id="erb4" value="4" autocomplete="off" />
+            <label class="btn btn-outline-dark" for="erb4">4</label>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center mb-2">
+          <div class="input-group d-flex flex-column" style="width: var(--input-width)">
+            <div class="d-flex w-100">
+              <div class="text-center" style="flex: 1 1 15%">Level</div>
+              <div class="text-center form-label" style="flex: 1 1 85%">
+                E4E procs:&nbsp;<span id="e4eProcsValue">0</span>
+              </div>
+            </div>
+
+            <div class="d-flex w-100">
+              <select
+                class="form-select"
+                id="e4eLevel"
+                style="
+                  flex: 1 1 15%;
+                  border-radius: 0.25rem 0 0 0.25rem;
+                  padding: 0;
+                  --bs-form-select-bg-img: none;
+                  text-align-last: center;
+                "
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6" selected>6</option>
+              </select>
+
+              <input
+                type="range"
+                class="form-range custom-background"
+                id="e4eProcs"
+                name="e4eProcs"
+                style="flex: 1 1 85%; border-radius: 0 0.25rem 0.25rem 0"
+                value="0"
+                min="0"
+                max="10"
+                step="1"
+                oninput="updateValue(this)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center mb-3">
+          <div class="input-group d-flex flex-column" style="width: var(--input-width)">
+            <div class="d-flex w-100">
+              <div class="text-center" style="flex: 1 1 15%">Level</div>
+              <div class="text-center" style="flex: 1 1 15%">Unique</div>
+              <div class="text-center form-label" style="flex: 1 1 70%">
+                Helper boost procs:&nbsp;<span id="helperBoostProcsValue">0</span>
+              </div>
+            </div>
+
+            <div class="d-flex w-100">
+              <select
+                class="form-select"
+                id="helperBoostLevel"
+                style="
+                  flex: 1 1 15%;
+                  border-radius: 0.25rem 0 0 0.25rem;
+                  padding: 0;
+                  --bs-form-select-bg-img: none;
+                  text-align-last: center;
+                "
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6" selected>6</option>
+              </select>
+              <select
+                class="form-select"
+                id="helperBoostUnique"
+                style="flex: 1 1 15%; border-radius: 0; padding: 0; --bs-form-select-bg-img: none; text-align: center"
+              >
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+
+              <input
+                type="range"
+                class="form-range custom-background"
+                id="helperBoostProcs"
+                name="helperBoostProcs"
+                style="flex: 1 1 70%; border-radius: 0 0.25rem 0.25rem 0"
+                value="0"
+                min="0"
+                max="10"
+                step="1"
+                oninput="updateValue(this)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <h5 class="mb-2">Player settings</h5>
+
+        <div class="d-flex justify-content-center align-items-center mb-2">
+          <label class="form-check-label order-1" for="camp">Good camp:</label>
+          <div class="form-check form-switch ms-3 order-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="camp" />
+          </div>
+        </div>
+
+        <div id="sleepDuration" class="text-center mb-2"></div>
+        <div class="d-flex justify-content-center align-items-center">
+          <label class="form-check-label order-1" for="mainBedtime">Bedtime:</label>
+          <input
+            type="time"
+            id="mainBedtime"
+            name="mainBedtime"
+            class="form-control ms-3 order-2"
+            value="21:30"
+            style="width: 200px"
+          />
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center mb-2">
+          <label class="form-check-label order-1" for="mainWakeup">Wake up:</label>
+          <input
+            type="time"
+            id="mainWakeup"
+            name="mainWakeup"
+            class="form-control ms-3 order-2"
+            value="06:00"
+            style="width: 200px"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center mt-3" style="margin-bottom: 50px">
+      <button
+        class="btn btn-outline-dark text-center"
+        id="submitButton"
+        style="width: var(--input-width)"
+        type="button"
+        onclick="goToProductionCalculator()"
+        disabled
+      >
+        Submit
+      </button>
+    </div>
+
+    <div id="spinner-div" style="display: none"></div>
+
+    <div id="rankings" class="container col-lg-8 mx-auto max-width-custom"></div>
+
+    <div class="container" id="chartContainer" style="margin-bottom: 50px">
+      <div class="row">
+        <div class="col-lg-8 mx-auto max-width-custom">
+          <div class="card mb-2">
+            <button
+              class="card-header text-center btn btn-outline-dark"
+              data-target="productionOutputId"
+              data-toggle="collapse"
+              id="placeholderHeaderId"
+            ></button>
+            <div class="card-body text-center" id="productionOutputId"></div>
+          </div>
+          <div class="card mb-2">
+            <button
+              class="card-header btn btn-outline-dark d-flex justify-content-between align-items-center"
+              data-target="productionAnalysisBodyId"
+              data-toggle="collapse"
+              id="productionAnalysisHeaderId"
+              style="width: 100%"
+            >
+              <span class="text-center" style="flex-grow: 1">
+                Production Analysis <i class="fa fa-caret-down"></i>
+              </span>
+              <span
+                class="fa fa-info-circle fa-lg"
+                data-bs-toggle="tooltip"
+                data-bs-placement="left"
+                data-bs-html="true"
+                title="
+                  <h6>Compare your Pokémon to neutral and optimal setups.</h6>
+
+                  Which optimal setup is used is based on your Pokémon's specialty.
+                  Your Pokémon is compared to the same optimal setup for all 3 specialties.
+                  The 100% benchmark for each specialty instead indicates how much you would get if you went focused on that type.
+                  </br></br>
+                  Neutral setup: Skill level 1</br>
+                  Neutral nature, no sub-skills</br></br>
+
+                  Optimal ingredient setup: Max skill level</br>
+                  Quiet [Ing M, Help M, Ing S]</br></br>
+
+                  Optimal berry setup: Max skill level</br>
+                  Adamant [BFS, Help M, Help S]</br>
+                  Never evolved</br></br>
+
+                  Optimal skill setup: Max skill level</br>
+                  Careful [Skill M, Help M, Skill S]
+                "
+              ></span>
+            </button>
+
+            <div class="card-body" id="productionAnalysisBodyId">
+              <canvas id="comparisonChart"></canvas>
+            </div>
+          </div>
+          <div class="card mb-2">
+            <button
+              class="card-header btn btn-outline-dark d-flex justify-content-between align-items-center"
+              data-target="energyChartOutputId"
+              data-toggle="collapse"
+              id="energyChartHeader"
+              style="width: 100%"
+            >
+              <span class="text-center" style="flex-grow: 1"> Energy <i class="fa fa-caret-down"></i> </span>
+              <span
+                class="fa fa-info-circle fa-lg"
+                data-bs-toggle="tooltip"
+                data-bs-placement="left"
+                data-bs-html="true"
+                title="
+                <h6>See how your energy changes over a full 24h day.</h6>
+
+                The simulation accounts for sleep, natural decline, energy skills and cooking recovery etc.
+                </br></br>
+
+                Higher energy means faster Pokémon, above 80% energy is the maximum speed increase.
+                </br></br>
+
+                A setup with Energy Recovery down nature may start at 100% if enough energy is recovered during the day, since you would start at 100% tomorrow given enough residual energy.
+                </br></br>
+
+                You can tap on the data points to show a tooltip with information about the event.
+                "
+              ></span>
+            </button>
+            <div class="card-body" id="energyChartOutputId">
+              <canvas id="energyChart"></canvas>
+            </div>
+          </div>
+          <div class="card mb-2">
+            <button
+              class="card-header btn btn-outline-dark d-flex justify-content-between align-items-center"
+              data-target="inventoryChartOutputId"
+              data-toggle="collapse"
+              id="inventoryChartHeader"
+              style="width: 100%"
+            >
+              <span class="text-center" style="flex-grow: 1"> Inventory <i class="fa fa-caret-down"></i> </span>
+              <span
+                class="fa fa-info-circle fa-lg"
+                data-bs-toggle="tooltip"
+                data-bs-placement="left"
+                data-bs-html="true"
+                title="
+                <h6>See how fast your Pokémon's carry inventory fills up during the day</h6>
+
+                When inventory is full it is not possible to get skill procs or ingredients anymore, this state is called sneaky snacking.
+                Thus the graph can be used as an indicator for how often you need to check the game on average.
+                </br></br>
+
+                You can tap on the data points to show a tooltip with information about the event.
+                "
+              ></span>
+            </button>
+            <div class="card-body" id="inventoryChartOutputId">
+              <canvas id="inventoryChart"></canvas>
+            </div>
+          </div>
+          <div class="card mb-2">
+            <button
+              class="card-header btn btn-outline-dark d-flex justify-content-between align-items-center"
+              data-target="skillChartOutputId"
+              data-toggle="collapse"
+              id="skillChartHeader"
+              style="width: 100%"
+            >
+              <span class="text-center" style="flex-grow: 1"> Skill procs <i class="fa fa-caret-down"></i> </span>
+              <span
+                class="fa fa-info-circle fa-lg"
+                data-bs-toggle="tooltip"
+                data-bs-placement="left"
+                data-bs-html="true"
+                title="
+                <h6>See how many skill procs are expected on average.</h6>
+
+                The simulation will both calculate a chance to wake up to a morning skill proc, and estimates the number of skill procs during the day.
+                </br></br>
+
+                It will try to schedule as many full procs during the day as possible. </br>
+                If estimated daily skill procs is 1.5 you would get 1 full proc in the middle of the day and the remaining 0.5 procs will be scheduled before bedtime.
+                </br></br>
+
+                The simulation will use the chance to proc as a skill value multiplier, thus 0.5 chance E4E proc would give <code>0.5 x 18 = 9 energy</code> at skill level 6.
+                </br></br>
+
+                Skills can't happen during sleep, so any time after bedtime will always be empty.
+                </br></br>
+
+                You can tap on the data points to show a tooltip with information about the event.
+                "
+              ></span>
+            </button>
+            <div class="card-body" id="skillChartOutputId">
+              <canvas id="skillChart"></canvas>
+            </div>
+          </div>
+          <div class="card mb-2">
+            <div class="card-body d-flex justify-content-center">
+              <button class="btn btn-outline-dark" id="downloadButton" onclick="downloadTextFile()">
+                Download Event Log
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-center py-2" style="background-color: #555; color: #ddd">
+      <div class="container">
+        <a href="https://discord.gg/ndzTXRHWzK" class="text-decoration-none" style="color: #f04545"
+          >Sleep API on Discord</a
+        >
+        |
+        <a href="https://github.com/SleepAPI/SleepAPI" class="text-decoration-none" style="color: #f04545"
+          >Contribute to Sleep API</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+export const mainskillUnits = [
+  'energy',
+  'berries',
+  'berry zone',
+  'ingredients',
+  'helps',
+  'skill helps',
+  'dream shards',
+  'strength',
+  'pot size',
+  'crit chance',
+  'candy',
+  'items'
+] as const;
+
+export type MainskillUnit = (typeof mainskillUnits)[number];
