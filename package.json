@@ -1,27 +1,26 @@
 {
-  "name": "pokesleep-box",
+  "name": "neroli-pocket",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Offline-first PWA for managing a personal Pokémon Sleep box and computing production.",
+  "description": "橙花口袋本：离线优先的宝可梦睡眠盒子与产出计算器",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "vue-tsc -b --noEmit",
-    "update-lab": "bash scripts/update-lab-common.sh"
+    "typecheck": "vue-tsc -b --noEmit"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
-    "dexie": "^4.2.1",
+    "@mdi/font": "^7.4.47",
     "pinia": "^3.0.4",
-    "uuid": "^11.1.0",
     "vue": "^3.5.22",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vuetify": "^3.10.5"
   },
   "devDependencies": {
     "@types/node": "^22.18.8",
@@ -30,6 +29,7 @@
     "typescript": "^5.9.3",
     "vite": "^7.1.9",
     "vite-plugin-pwa": "^1.0.3",
+    "vite-plugin-vuetify": "^2.1.2",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.1.0",
     "workbox-window": "^7.3.0"

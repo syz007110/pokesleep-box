@@ -1,85 +1,63 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { calculatePokemonProduction, teamHelpingBonusCount } from '../calc'
-import { listPokemon, removePokemon, upsertPokemon } from '../db'
-import { getNature, islandBerryNames, requirePokemon } from '../game/catalog'
-import { pokemonLabel, pokemonSearchBlob, matchesQuery } from '../i18n/names'
-import type { BoxPokemon, BoxSort, SpecialtyFilter } from '../models/types'
-import { emptyPokemon, toPlainPokemon } from '../models/types'
-import { useSettingsStore } from './settings'
+import { getSpecies } from '../data/catalog'
+import { deletePokemon, listPokemon, putPokemon, replacePokemon } from '../db'
+import { emptyPokemon, type BoxPokemon } from '../models/types'
 
 export const useBoxStore = defineStore('box', () => {
-  const list = ref<BoxPokemon[]>([])
+  const pokemon = ref<BoxPokemon[]>([])
   const loaded = ref(false)
   const query = ref('')
-  const specialty = ref<SpecialtyFilter>('all')
-  const sort = ref<BoxSort>('updated')
+
+  const filtered = computed(() => {
+    const q = query.value.trim().toLowerCase()
+    if (!q) return pokemon.value
+    return pokemon.value.filter((row) => {
+      const species = getSpecies(row.speciesId)
+      const label = (row.nickname || species?.nameZh || species?.nameEn || row.speciesId).toLowerCase()
+      return (
+        label.includes(q) ||
+        row.nickname.toLowerCase().includes(q) ||
+        row.speciesId.toLowerCase().includes(q) ||
+        String(species?.dex ?? '') === q
+      )
+    })
+  })
 
   async function hydrate() {
-    list.value = await listPokemon()
+    pokemon.value = await listPokemon()
     loaded.value = true
   }
 
-  async function save(pokemon: BoxPokemon) {
-    const plain = toPlainPokemon({ ...pokemon, updatedAt: Date.now() })
-    const idx = list.value.findIndex((p) => p.id === plain.id)
-    if (idx >= 0) list.value[idx] = plain
-    else list.value.unshift(plain)
-    await upsertPokemon(plain)
-    return plain
+  async function add(speciesId: string) {
+    const row = emptyPokemon({ speciesId })
+    await putPokemon(row)
+    pokemon.value = [row, ...pokemon.value]
+    return row
+  }
+
+  async function save(row: BoxPokemon) {
+    const next = { ...row, updatedAt: Date.now() }
+    await putPokemon(next)
+    const index = pokemon.value.findIndex((item) => item.id === next.id)
+    if (index >= 0) pokemon.value.splice(index, 1, next)
+    else pokemon.value.unshift(next)
+    return next
   }
 
   async function remove(id: string) {
-    await removePokemon(id)
-    list.value = list.value.filter((p) => p.id !== id)
+    await deletePokemon(id)
+    pokemon.value = pokemon.value.filter((item) => item.id !== id)
   }
 
-  function createDraft(speciesId: string): BoxPokemon {
-    return emptyPokemon({ id: crypto.randomUUID(), speciesId })
+  async function replaceAll(rows: BoxPokemon[]) {
+    await replacePokemon(rows)
+    pokemon.value = rows
   }
 
-  function productionFor(member: BoxPokemon) {
-    const settingsStore = useSettingsStore()
-    const pokemon = requirePokemon(member.speciesId)
-    const nature = getNature(member.natureId)
-    const islandBerries = islandBerryNames(settingsStore.settings.islandId)
-    const helpingBonusOthers = Math.max(
-      settingsStore.settings.helpingBonusOthers,
-      teamHelpingBonusCount(list.value, member.id)
-    )
-    return calculatePokemonProduction(member, {
-      pokemon,
-      nature,
-      settings: { ...settingsStore.settings, helpingBonusOthers }
-    }, islandBerries)
+  function byId(id: string) {
+    return pokemon.value.find((item) => item.id === id)
   }
 
-  const filtered = computed(() => {
-    const rows = list.value.filter((member) => {
-      const mon = requirePokemon(member.speciesId)
-      if (specialty.value !== 'all') {
-        if (specialty.value === 'mixed' && mon.specialty !== 'all') return false
-        if (specialty.value !== 'mixed' && mon.specialty !== specialty.value) return false
-      }
-      const blob = `${pokemonSearchBlob(mon.name, mon.pokedexNumber)} ${member.nickname}`
-      return matchesQuery(blob, query.value)
-    })
-
-    const sorted = [...rows]
-    sorted.sort((a, b) => {
-      if (sort.value === 'level') return b.level - a.level
-      if (sort.value === 'name') {
-        const an = a.nickname || pokemonLabel(a.speciesId)
-        const bn = b.nickname || pokemonLabel(b.speciesId)
-        return an.localeCompare(bn, 'zh')
-      }
-      if (sort.value === 'strength') {
-        return productionFor(b).totalStrength - productionFor(a).totalStrength
-      }
-      return b.updatedAt - a.updatedAt
-    })
-    return sorted
-  })
-
-  return { list, loaded, query, specialty, sort, filtered, hydrate, save, remove, createDraft, productionFor }
+  return { pokemon, loaded, query, filtered, hydrate, add, save, remove, replaceAll, byId }
 })

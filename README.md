@@ -1,76 +1,74 @@
-# 宝可梦睡眠盒子（pokesleep-box）
+# 橙花口袋本
 
-给自己用的离线优先 PWA：把游戏里的宝可梦记进盒子，按 Neroli’s Lab 的数据和公式估算每天产出。数据只存在这台设备的 IndexedDB 里，不经过任何云端。以后会在「自己的盒子」上做队伍优选。
+给自己用的离线优先 PWA：把《宝可梦睡眠》里的帮手记进盒子，按 Neroli's Lab / SleepAPI 的公开公式估算每天产出，再编最多 5 只的队伍。数据只存在这台设备的 IndexedDB，没有后端，也不会 Google 登录。
 
-适合 iPhone Safari → 分享 → **添加到主屏幕**。静态托管在 GitHub Pages：`https://<user>.github.io/pokesleep-box/`。
+适合 iPhone Safari → 分享 → **添加到主屏幕**。
+
+线上地址：<https://syz007110.github.io/pokesleep-box/>
+
+## 能做什么
+
+- **盒子**：搜索、添加、编辑宝可梦（等级、性格、食材栏、主技能、副技能、睡饱饱奖章）
+- **产出**：显示间隔、白天/夜间帮忙、树果与食材、保底技能率、夜间携带与偷吃
+- **队伍**：5 个空位编队，叠加帮手奖励（最多 5 层，与速度副技能合计 35%）
+- **备份**：导出 / 导入 JSON（Safari 清缓存会丢掉盒子，请定期备份）
+- **数据包**：内置版本写在设置页；以后可填远程 JSON 覆盖图鉴，不会改用户存档
+
+本版不含最优队伍求解器。
 
 ## 本地运行
 
-需要 Node 22+（Lab 仓库本身要求 Node 24，本仓库只引用它的纯 TS `common/`，用 22 即可）。
+需要 Node 22+。
 
 ```bash
-npm install
+npm ci
 npm test
 npm run dev
 ```
 
-生产构建（带 `/pokesleep-box/` 路径）：
+生产构建（GitHub 项目 Pages 需要子路径）：
 
 ```bash
 npm run build
 npm run preview
 ```
 
+构建默认 `base` 为 `/pokesleep-box/`。本地预览若要挂在根路径，可设 `VITE_BASE=/`。
+
 ## 结构
 
 ```
 src/
-  calc/          纯 TS 产出计算（和 UI 脱钩，方便以后接队伍模拟）
-  db/            Dexie / IndexedDB，JSON 导出导入
-  game/          对 Lab 图鉴、性格、副技能、岛屿的薄封装
-  i18n/          中/日/英名称表，key 是 Lab id，后续给 OCR 用
-  models/        盒子里「我的宝可梦」和全局设置
+  data/          内置数据包 pack.json 与图鉴查询
+  calc/          纯 TS 产出计算（和 UI 脱钩）
+  db/            IndexedDB：盒子、队伍、设置、数据包覆盖
   stores/        Pinia
-  views/         盒子 / 添加 / 编辑 / 产出 / 设置
-vendor/nerolis-lab/
-  common/src     从 Lab 拷来的游戏数据与公式
+  views/         盒子 / 编辑 / 队伍 / 设置
+  components/    头像、产出面板、盒子卡片
 ```
 
-计算入口：`src/calc/production.ts` 的 `calculatePokemonProduction`。帮忙间隔与 Lab `help-calculator.ts` 一致；树果能量、食材率、技能率、持有上限用 `common/` 里的 `berryPowerForLevel`、`stat-utils`、`CarrySizeUtils`。
-
-## 从 Lab 更新游戏数据
-
-```bash
-bash scripts/update-lab-common.sh          # 默认跟 Lab 默认分支
-bash scripts/update-lab-common.sh v2.71.6  # 指定 tag / 分支
-npm test
-```
-
-脚本会替换 `vendor/nerolis-lab/common/src`（去掉测试和 vitest），并写下 commit 到 `vendor/nerolis-lab/SOURCE.txt`。Lab 是 Apache-2.0，NOTICE / LICENSE 一并保留。
+技术栈：Vue 3 + Vite + TypeScript + Pinia + Vuetify + vite-plugin-pwa。
 
 ## GitHub Pages
 
-推到 `main` 后，`.github/workflows/deploy.yml` 会跑测试、构建并部署。仓库设置里把 Pages 来源选成 **GitHub Actions**。站点根路径是 `/pokesleep-box/`。
+推到 `main` 后，`.github/workflows/deploy.yml` 会安装、测试、构建并部署 `dist/`。
 
-第一次打开若 404，确认 Actions 已成功，并且 Pages 环境已创建。
+仓库 **Settings → Pages** 的 Source 选 **GitHub Actions**（不是 Deploy from a branch）。
 
-## 规则里还不确定的点
+第一次打开若 404，先看 Actions 是否成功，以及 Pages 环境是否已创建。
 
-见用户整理的 `rules.md`。本仓库按 **Lab 源码**实现，并标出和 wiki 的差异：
+## 在 iPhone 上安装
 
-- 活力 ×0.45 档：Lab 是 **80+**，wiki 写 81+。
-- 副技能解锁：Lab 是 10 / 25 / 50 / **70 / 80**；常见说法是 75 / 100。等级上限目前是 70，所以第四格在 70 级解锁。
-- 技能保底、夜间最多结算 2 次技能：社区模型，不是官方公式。
-- 基础食材率 / 技能率：Lab 注明来自 Mathcord RP 数据，原表已 Deprecated。
-- 夜间产出：v1 用「白天按活力下降、夜里用睡前活力、装满后偷吃只拿树果」。完整事件模拟（Lab 的 team-simulator）还没移植。
+1. 用 **Safari**（不要用微信或 Chrome）打开 <https://syz007110.github.io/pokesleep-box/>
+2. 点底部分享按钮
+3. 选 **添加到主屏幕**，名字可改成「口袋本」
+4. 从主屏幕图标打开，即全屏 PWA
 
-## 下一步
+第一次打开需要联网把壳和数据包拉齐。之后 Service Worker 会缓存，断网也能算。
 
-1. **OCR 导入**：iOS 快捷指令截图 → 本地识别中文 → 用 `src/i18n` 的名称表对上 Lab id。
-2. **队伍优选**：把 Lab `backend/src/services/simulation-service` 和 `solve/set-cover` 接到「我的盒子」上，在设备上算最高产队伍。
+数据只存在这台 iPhone。打开应用 → **设置** → **导出备份 JSON**，存到「文件」或 iCloud。
 
 ## 许可
 
 - 本项目自己的代码：MIT（见 `LICENSE`）
-- 游戏数据与公式：Neroli’s Lab `common/`，Apache-2.0（`vendor/nerolis-lab/`）
-- 中日文名称：个人自用对照表，见 `src/i18n/SOURCE.txt`
+- 游戏数据与公式：Neroli's Lab `common/`，Apache-2.0（见 `third_party/nerolis-lab/`）

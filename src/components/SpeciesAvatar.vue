@@ -1,54 +1,59 @@
 <script setup lang="ts">
-import type { Pokemon } from 'sleepapi-common'
+import { computed } from 'vue'
+import { getBerry } from '../data/catalog'
+import type { SpeciesDef } from '../models/types'
 
-const TYPE_COLOR: Record<string, string> = {
-  normal: '#A8A878',
-  fire: '#F08030',
-  water: '#6890F0',
-  electric: '#F8D030',
-  grass: '#78C850',
-  ice: '#98D8D8',
-  fighting: '#C03028',
-  poison: '#A040A0',
-  ground: '#E0C068',
+const props = defineProps<{
+  species?: SpeciesDef | null
+  size?: number
+}>()
+
+const typeColor: Record<string, string> = {
   flying: '#A890F0',
-  psychic: '#F85888',
   bug: '#A8B820',
-  rock: '#B8A038',
+  electric: '#F8D030',
   ghost: '#705898',
-  dragon: '#7038F8',
+  fairy: '#EE99AC',
+  psychic: '#F85888',
+  fire: '#F08030',
+  fighting: '#C03028',
+  normal: '#A8A878',
+  ground: '#E0C068',
+  grass: '#78C850',
+  rock: '#B8A038',
+  water: '#6890F0',
   dark: '#705848',
+  poison: '#A040A0',
+  ice: '#98D8D8',
   steel: '#B8B8D0',
-  fairy: '#EE99AC'
+  dragon: '#7038F8'
 }
 
-const props = defineProps<{ pokemon: Pokemon; size?: number }>()
-const color = TYPE_COLOR[props.pokemon.berry.type] ?? '#7dcea0'
+const berry = computed(() => (props.species ? getBerry(props.species.berry) : undefined))
+const background = computed(() => typeColor[berry.value?.type ?? ''] ?? '#7EB8DA')
+const initial = computed(() => (props.species?.nameZh || '?').slice(0, 1))
 </script>
 
 <template>
   <div
     class="avatar"
     :style="{
-      width: (size ?? 52) + 'px',
-      height: (size ?? 52) + 'px',
-      background: `linear-gradient(160deg, ${color}, color-mix(in srgb, ${color} 55%, #1b2a22))`
+      width: `${size ?? 44}px`,
+      height: `${size ?? 44}px`,
+      background,
+      color: '#1B2430'
     }"
-    :aria-hidden="true"
   >
-    <span>{{ String(pokemon.pokedexNumber).padStart(2, '0').slice(-2) }}</span>
+    {{ initial }}
   </div>
 </template>
 
 <style scoped>
 .avatar {
-  border-radius: 18px;
-  display: grid;
+  border-radius: 14px;
+  flex: none;
   place-items: center;
-  color: #fff;
   font-weight: 800;
-  letter-spacing: -0.04em;
-  flex: 0 0 auto;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  display: grid;
 }
 </style>
