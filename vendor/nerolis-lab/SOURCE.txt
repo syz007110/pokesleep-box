@@ -1,6 +1,0 @@
-Source: https://github.com/nerolis-lab/nerolis-lab
-Package: common/ (sleepapi-common)
-Commit: b52bc32138ab834477b5cad70a25a952474f5f3a
-License: Apache-2.0
-Copied: 2026-10-18
-Update: run scripts/update-lab-common.sh

@@ -1,12 +1,11 @@
-pokesleep-box
+橙花口袋本（neroli-pocket / pokesleep-box）
 Copyright 2026 pokesleep-box contributors
 
-This product includes software developed by The Neroli's Lab Authors
-(https://github.com/nerolis-lab/nerolis-lab), licensed under the Apache License,
-Version 2.0. See vendor/nerolis-lab/LICENSE and vendor/nerolis-lab/NOTICE.
+This product includes game data and production formulas derived from
+Neroli's Lab (https://github.com/nerolis-lab/nerolis-lab), licensed under
+the Apache License, Version 2.0. See third_party/nerolis-lab/LICENSE and
+third_party/nerolis-lab/NOTICE.
 
-Chinese and Japanese game-term tables in src/i18n/names.ts include strings
-cross-checked against public Pokémon Sleep materials and, for personal use,
-the unlicensed name tables in bennyhe/pokeSleepCalc
-(https://github.com/bennyhe/pokeSleepCalc). Those tables are not redistributed
-verbatim; they were used as a reference when mapping Neroli's Lab ids.
+The application does not include Neroli's Lab backend, Google login, or
+the team solver. Packed Pokémon / berry / ingredient / skill tables live
+in src/data/pack.json for offline personal use.

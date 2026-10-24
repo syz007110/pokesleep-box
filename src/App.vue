@@ -1,32 +1,51 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { UI } from './i18n/ui'
 
 const route = useRoute()
 const router = useRouter()
-const tab = computed(() => (route.meta.tab as string) ?? 'box')
-const hideNav = computed(() => route.name === 'add' || route.name === 'edit')
 
 const items = [
-  { id: 'box', to: '/', label: UI.tabs.box, icon: '▦' },
-  { id: 'production', to: '/production', label: UI.tabs.production, icon: '◈' },
-  { id: 'settings', to: '/settings', label: UI.tabs.settings, icon: '☉' }
+  { to: '/', icon: 'mdi-pokeball', label: '盒子' },
+  { to: '/team', icon: 'mdi-account-group', label: '队伍' },
+  { to: '/settings', icon: 'mdi-cog', label: '设置' }
 ]
+
+const tab = computed(() => {
+  if (route.path.startsWith('/team')) return '/team'
+  if (route.path.startsWith('/settings')) return '/settings'
+  return '/'
+})
 </script>
 
 <template>
-  <router-view />
-  <nav v-if="!hideNav" class="bottom-nav" aria-label="主导航">
-    <button
-      v-for="item in items"
-      :key="item.id"
-      class="nav-item"
-      :class="{ active: tab === item.id }"
-      @click="router.push(item.to)"
+  <v-app>
+    <v-app-bar color="surface" elevation="0" height="56">
+      <v-app-bar-title class="text-subtitle-1 font-weight-bold">橙花口袋本</v-app-bar-title>
+      <v-spacer />
+      <v-btn
+        v-if="route.name === 'inventory'"
+        icon="mdi-plus"
+        variant="text"
+        aria-label="添加宝可梦"
+        @click="router.push('/pokemon/new')"
+      />
+    </v-app-bar>
+    <v-main>
+      <router-view />
+    </v-main>
+    <v-bottom-navigation
+      :model-value="tab"
+      color="primary"
+      bg-color="surface"
+      grow
+      mandatory
+      @update:model-value="router.push(String($event))"
     >
-      <span class="nav-icon">{{ item.icon }}</span>
-      {{ item.label }}
-    </button>
-  </nav>
+      <v-btn v-for="item in items" :key="item.to" :value="item.to">
+        <v-icon>{{ item.icon }}</v-icon>
+        <span>{{ item.label }}</span>
+      </v-btn>
+    </v-bottom-navigation>
+  </v-app>
 </template>

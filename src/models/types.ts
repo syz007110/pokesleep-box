@@ -1,7 +1,140 @@
-export type SpecialtyFilter = 'all' | 'berry' | 'ingredient' | 'skill' | 'mixed'
-export type ThemePreference = 'system' | 'light' | 'dark'
-export type EnergyMode = 'fixed' | 'degrade'
-export type BoxSort = 'updated' | 'level' | 'name' | 'strength'
+export const APP_ID = 'neroli-pocket'
+export const BACKUP_SCHEMA_VERSION = 1
+export const SUBSKILL_UNLOCK_LEVELS = [10, 25, 50, 75, 100] as const
+
+export type Specialty = 'berry' | 'ingredient' | 'skill' | 'all'
+export type NatureStat = 'speed' | 'ingredient' | 'skill' | 'energy' | 'exp' | 'neutral'
+export type SkillUnit =
+  | 'strength'
+  | 'energy'
+  | 'ingredients'
+  | 'helps'
+  | 'pot'
+  | 'shards'
+  | 'berries'
+  | 'copy'
+  | string
+
+export interface IngredientDrop {
+  id: string
+  amount: number
+}
+
+export interface BerryDef {
+  id: string
+  nameEn: string
+  nameZh: string
+  value: number
+  type: string
+  typeZh: string
+}
+
+export interface IngredientDef {
+  id: string
+  nameEn: string
+  nameZh: string
+  value: number
+}
+
+export interface NatureDef {
+  id: string
+  nameZh: string
+  up: NatureStat
+  down: NatureStat
+  frequency: number
+  ingredient: number
+  skill: number
+  energy: number
+}
+
+export interface SubskillDef {
+  id: string
+  short: string
+  kind: string
+  amount: number
+  rarity: string
+  nameZh: string
+}
+
+export interface SkillDef {
+  id: string
+  nameEn: string
+  nameZh: string
+  unit: SkillUnit
+  amounts: number[]
+  maxLevel: number
+}
+
+export interface RecipeDef {
+  id: string
+  nameEn: string
+  nameZh: string
+  type: string
+  bonus: number
+  ingredients: IngredientDrop[]
+}
+
+export interface SpeciesDef {
+  id: string
+  nameEn: string
+  nameZh: string
+  dex: number
+  specialty: Specialty
+  frequency: number
+  ingredientRate: number
+  skillRate: number
+  berry: string
+  carrySize: number
+  previousEvolutions: number
+  remainingEvolutions: number
+  skill: string
+  ingredients: {
+    lv1: IngredientDrop[]
+    lv30: IngredientDrop[]
+    lv60: IngredientDrop[]
+  }
+  evolvesFrom: string | null
+}
+
+export interface PackConstants {
+  maxPokemonLevel: number
+  maxRibbonLevel: number
+  maxTeamSize: number
+  maxIslandBonus: number
+  maxSleepMinutes: number
+  mealsInDay: number
+  favoredBerryMultiplier: number
+  helpSpeedCap: number
+  levelFrequencyFactor: number
+  goodCampFactor: number
+  energyBands: { min: number; factor: number }[]
+  recipeLevelBonus: Record<string, number>
+}
+
+export interface DataPack {
+  version: string
+  source: string
+  updatedAt: string
+  constants: PackConstants
+  berries: BerryDef[]
+  ingredients: IngredientDef[]
+  natures: NatureDef[]
+  subskills: SubskillDef[]
+  skills: SkillDef[]
+  recipes: RecipeDef[]
+  pokemon: SpeciesDef[]
+}
+
+export interface AppSettings {
+  islandBonus: number
+  favoredBerries: string[]
+  goodCamp: boolean
+  dayHours: number
+  nightHours: number
+  startingEnergy: number
+  packUrl: string
+  lastPackCheck: string | null
+}
 
 export interface BoxPokemon {
   id: string
@@ -9,93 +142,66 @@ export interface BoxPokemon {
   nickname: string
   level: number
   natureId: string
-  /** Lab subskill names, unlock order (slot 0 = first unlocked). */
-  subskills: string[]
-  /** Chosen option index in ingredient0 / ingredient30 / ingredient60. */
-  ingredientIndexes: [number, number, number]
-  /** In-game displayed main skill level (already includes Skill Level Up). */
+  subskills: (string | null)[]
   skillLevel: number
   ribbon: number
-  extraCarry: number
-  shiny: boolean
+  ingredient30: number
+  ingredient60: number
+  favorite: boolean
   createdAt: number
   updatedAt: number
 }
 
-export interface AppSettings {
-  theme: ThemePreference
-  islandId: string
-  favoredBerries: string[]
-  islandBonus: number
-  camp: boolean
-  sleepMinutes: number
-  helpingBonusOthers: number
-  energyMode: EnergyMode
-  fixedEnergy: number
-  energyIncense: boolean
-  expertMode: boolean
-}
-
-export const SETTINGS_KEY = 'app'
-export const BACKUP_VERSION = 1
-
-export const DEFAULT_SETTINGS: AppSettings = {
-  theme: 'system',
-  islandId: 'greengrass',
-  favoredBerries: [],
-  islandBonus: 0,
-  camp: false,
-  sleepMinutes: 510,
-  helpingBonusOthers: 0,
-  energyMode: 'degrade',
-  fixedEnergy: 80,
-  energyIncense: false,
-  expertMode: false
+export interface Team {
+  id: string
+  name: string
+  memberIds: (string | null)[]
 }
 
 export interface BackupFile {
-  version: number
+  app: string
+  schemaVersion: number
   exportedAt: string
+  packVersion: string
   pokemon: BoxPokemon[]
+  teams: Team[]
   settings: AppSettings
 }
 
-export function toPlainPokemon(pokemon: BoxPokemon): BoxPokemon {
-  return {
-    id: pokemon.id,
-    speciesId: pokemon.speciesId,
-    nickname: pokemon.nickname,
-    level: Number(pokemon.level),
-    natureId: pokemon.natureId,
-    subskills: [...pokemon.subskills].filter(Boolean),
-    ingredientIndexes: [
-      Number(pokemon.ingredientIndexes[0] ?? 0),
-      Number(pokemon.ingredientIndexes[1] ?? 0),
-      Number(pokemon.ingredientIndexes[2] ?? 0)
-    ],
-    skillLevel: Number(pokemon.skillLevel),
-    ribbon: Number(pokemon.ribbon),
-    extraCarry: Number(pokemon.extraCarry),
-    shiny: Boolean(pokemon.shiny),
-    createdAt: Number(pokemon.createdAt),
-    updatedAt: Number(pokemon.updatedAt)
-  }
+export const DEFAULT_SETTINGS: AppSettings = {
+  islandBonus: 0,
+  favoredBerries: [],
+  goodCamp: false,
+  dayHours: 15.5,
+  nightHours: 8.5,
+  startingEnergy: 100,
+  packUrl: '',
+  lastPackCheck: null
 }
 
-export function emptyPokemon(partial: Pick<BoxPokemon, 'id' | 'speciesId'> & Partial<BoxPokemon>): BoxPokemon {
+export function emptyPokemon(partial: Pick<BoxPokemon, 'speciesId'> & Partial<BoxPokemon>): BoxPokemon {
   const now = Date.now()
   return {
+    id: crypto.randomUUID(),
     nickname: '',
     level: 30,
     natureId: 'Hardy',
-    subskills: [],
-    ingredientIndexes: [0, 0, 0],
+    subskills: [null, null, null, null, null],
     skillLevel: 1,
     ribbon: 0,
-    extraCarry: 0,
-    shiny: false,
+    ingredient30: 0,
+    ingredient60: 0,
+    favorite: false,
     createdAt: now,
     updatedAt: now,
     ...partial
+  }
+}
+
+export function emptyTeam(name = '第一队'): Team {
+  return {
+    id: crypto.randomUUID(),
+    name,
+    memberIds: [null, null, null, null, null]
   }
 }

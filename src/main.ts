@@ -3,21 +3,26 @@ import { createApp } from 'vue'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import { router } from './router'
+import { vuetify } from './plugins/vuetify'
 import { useBoxStore } from './stores/box'
+import { usePackStore } from './stores/pack'
 import { useSettingsStore } from './stores/settings'
+import { useTeamStore } from './stores/team'
 import './styles/main.css'
 
 const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
 app.use(router)
-
-const settings = useSettingsStore(pinia)
-const box = useBoxStore(pinia)
-Promise.all([settings.hydrate(), box.hydrate()]).catch((err) => {
-  console.error(err)
-})
+app.use(vuetify)
 
 registerSW({ immediate: true })
 
-app.mount('#app')
+Promise.all([
+  usePackStore(pinia).hydrate(),
+  useBoxStore(pinia).hydrate(),
+  useSettingsStore(pinia).hydrate(),
+  useTeamStore(pinia).hydrate()
+]).finally(() => {
+  app.mount('#app')
+})

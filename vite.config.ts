@@ -3,6 +3,7 @@ import { copyFileSync, existsSync } from 'node:fs'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import vuetify from 'vite-plugin-vuetify'
 
 const repoBase = '/pokesleep-box/'
 
@@ -13,47 +14,27 @@ export default defineConfig(({ command }) => {
     base,
     plugins: [
       vue(),
+      vuetify({ autoImport: true }),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['icons/apple-touch-icon.png', 'icons/favicon-32.png', 'icons/mask-icon.svg'],
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192.png', 'pwa-512.png'],
         manifest: {
-          id: repoBase,
-          name: '宝可梦睡眠盒子',
-          short_name: '睡眠盒子',
-          description: '离线管理自己的宝可梦睡眠盒子，并计算每只宝可梦的产出。',
+          id: base,
+          name: '橙花口袋本',
+          short_name: '口袋本',
+          description: '宝可梦睡眠离线计算器，数据只存在本机。',
           lang: 'zh-CN',
           start_url: base,
           scope: base,
           display: 'standalone',
           orientation: 'portrait',
-          background_color: '#0e1714',
-          theme_color: '#0e1714',
+          background_color: '#141A22',
+          theme_color: '#141A22',
           categories: ['utilities', 'games'],
           icons: [
-            {
-              src: 'icons/icon-192.png',
-              sizes: '192x192',
-              type: 'image/png',
-              purpose: 'any'
-            },
-            {
-              src: 'icons/icon-512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any'
-            },
-            {
-              src: 'icons/icon-maskable-192.png',
-              sizes: '192x192',
-              type: 'image/png',
-              purpose: 'maskable'
-            },
-            {
-              src: 'icons/icon-maskable-512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'maskable'
-            }
+            { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
+            { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
+            { src: 'pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
           ]
         },
         workbox: {
@@ -78,12 +59,8 @@ export default defineConfig(({ command }) => {
     ],
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
-        'sleepapi-common': fileURLToPath(new URL('./src/lab.ts', import.meta.url))
+        '@': fileURLToPath(new URL('./src', import.meta.url))
       }
-    },
-    optimizeDeps: {
-      include: ['uuid']
     }
   }
 })

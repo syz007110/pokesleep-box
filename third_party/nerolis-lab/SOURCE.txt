@@ -1,0 +1,7 @@
+Source: https://github.com/nerolis-lab/nerolis-lab
+Package: common/ (sleepapi-common)
+Original copy commit: b52bc32138ab834477b5cad70a25a952474f5f3a
+License: Apache-2.0
+Packed: 2026-10-24 as src/data/pack.json (version 2026.10.24-nl)
+Note: The full Lab TypeScript tree is not vendored. Only the packed
+offline catalog and Apache-2.0 notices are kept for personal use.
