@@ -8,69 +8,105 @@ import type { SpeciesDef } from '../models/types'
 defineProps<{
   result: ProductionResult
   species?: SpeciesDef | null
+  compact?: boolean
 }>()
 </script>
 
 <template>
   <div>
-    <div class="stat-grid mb-3">
-      <div class="stat-card">
-        <div class="label">24h 卡比兽能量</div>
-        <div class="value">{{ formatNumber(result.totalStrength, 0) }}</div>
-        <div class="muted">树果 {{ formatNumber(result.berryEnergy, 0) }} + 技能 {{ formatNumber(result.skillEnergy, 0) }}</div>
+    <div class="lab-card mb-2">
+      <div class="hero-strength">
+        <div class="muted">24h 卡比兽能量</div>
+        <div class="value num">{{ formatNumber(result.totalStrength, 0) }}</div>
+        <div class="muted">
+          树果 {{ formatNumber(result.berryEnergy, 0) }}
+          · 技能 {{ formatNumber(result.skillEnergy, 0) }}
+        </div>
       </div>
-      <div class="stat-card">
+    </div>
+
+    <div class="stat-grid mb-2">
+      <div class="stat-tile">
         <div class="label">显示间隔</div>
-        <div class="value">{{ result.displayFrequencyLabel }}</div>
+        <div class="value num">{{ result.displayFrequencyLabel }}</div>
         <div class="muted">{{ result.displayFrequency }} 秒</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-tile">
         <div class="label">帮忙次数</div>
-        <div class="value">{{ formatNumber(result.helps) }}</div>
-        <div class="muted">白天 {{ formatNumber(result.dayHelps) }} / 夜间 {{ formatNumber(result.nightHelps) }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">树果</div>
-        <div class="value">{{ formatNumber(result.berries) }}</div>
+        <div class="value num">{{ formatNumber(result.helps) }}</div>
         <div class="muted">
-          每次 {{ result.berriesPerDrop }} 个 · {{ formatNumber(result.berryEnergyEach, 0) }} 能
+          <span class="day">昼 {{ formatNumber(result.dayHelps) }}</span>
+          ·
+          <span class="night">夜 {{ formatNumber(result.nightHelps) }}</span>
+        </div>
+      </div>
+      <div class="stat-tile">
+        <div class="label">树果</div>
+        <div class="value num berry">{{ formatNumber(result.berries) }}</div>
+        <div class="muted">
+          每次 {{ result.berriesPerDrop }} · {{ formatNumber(result.berryEnergyEach, 0) }} 能
           <span v-if="result.favored"> · 喜爱 ×2</span>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="stat-tile">
         <div class="label">技能发动</div>
-        <div class="value">{{ formatNumber(result.skillProcs) }}</div>
+        <div class="value num skill">{{ formatNumber(result.skillProcs) }}</div>
         <div class="muted">
-          {{ getSkill(species?.skill ?? '')?.nameZh ?? '主技能' }} · {{ (result.skillRateWithPity * 100).toFixed(2) }}%
+          {{ getSkill(species?.skill ?? '')?.nameZh ?? '主技能' }} ·
+          {{ (result.skillRateWithPity * 100).toFixed(2) }}%
         </div>
       </div>
-      <div class="stat-card">
+      <div v-if="!compact" class="stat-tile">
         <div class="label">携带上限</div>
-        <div class="value">{{ result.carrySize }}</div>
+        <div class="value num">{{ result.carrySize }}</div>
         <div class="muted">夜间溢出 {{ formatNumber(result.nightSpilledHelps) }} 次</div>
       </div>
     </div>
 
-    <v-card class="pa-3 mb-3" color="surface-bright">
-      <div class="text-caption muted mb-2">食材（24h，含夜间偷吃前）</div>
+    <div class="lab-card">
+      <div class="muted mb-2">食材（24h，含夜间偷吃前）</div>
       <div v-if="!result.ingredients.length" class="muted">当前等级尚未解锁食材栏。</div>
-      <div v-for="row in result.ingredients" :key="row.id" class="d-flex justify-space-between py-1">
+      <div v-for="row in result.ingredients" :key="row.id" class="ing-row">
         <span>{{ row.nameZh }}</span>
-        <span class="font-weight-medium">{{ formatNumber(row.amount) }} · {{ formatNumber(row.energy, 0) }} 能</span>
+        <span class="num">{{ formatNumber(row.amount) }} · {{ formatNumber(row.energy, 0) }} 能</span>
       </div>
-      <div class="d-flex justify-space-between pt-2 text-caption">
+      <div class="ing-row pt-2">
         <span class="muted">食材能量合计（未做菜）</span>
-        <span>{{ formatNumber(result.ingredientEnergy, 0) }}</span>
+        <span class="num">{{ formatNumber(result.ingredientEnergy, 0) }}</span>
       </div>
-    </v-card>
+    </div>
 
-    <v-alert
+    <div
       v-if="result.skillUnit && result.skillUnit !== 'strength'"
-      type="info"
-      variant="tonal"
-      density="compact"
+      class="lab-card mt-2"
     >
       技能效果约 {{ formatNumber(result.skillAmount) }} {{ skillUnitLabel(result.skillUnit) }}
-    </v-alert>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.day {
+  color: var(--lab-day);
+}
+
+.night {
+  color: var(--lab-night);
+}
+
+.berry {
+  color: var(--lab-berry);
+}
+
+.skill {
+  color: var(--lab-skill);
+}
+
+.ing-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+}
+</style>

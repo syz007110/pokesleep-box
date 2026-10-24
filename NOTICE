@@ -6,6 +6,13 @@ Neroli's Lab (https://github.com/nerolis-lab/nerolis-lab), licensed under
 the Apache License, Version 2.0. See third_party/nerolis-lab/LICENSE and
 third_party/nerolis-lab/NOTICE.
 
+Visual tokens (palette, specialty / subskill / nature colors) and
+list / team / Pokémon-input layout patterns were restyled after the
+public Neroli's Lab frontend (Apache-2.0). The Lab TypeScript tree is
+not vendored.
+
 The application does not include Neroli's Lab backend, Google login, or
 the team solver. Packed Pokémon / berry / ingredient / skill tables live
 in src/data/pack.json for offline personal use.
+
+Chakra Petch is SIL Open Font License 1.1; see src/assets/fonts/OFL.txt.

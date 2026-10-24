@@ -5,3 +5,7 @@ License: Apache-2.0
 Packed: 2026-10-24 as src/data/pack.json (version 2026.10.24-nl)
 Note: The full Lab TypeScript tree is not vendored. Only the packed
 offline catalog and Apache-2.0 notices are kept for personal use.
+UI restyle (2026-10-24) copies Lab visual tokens and information
+architecture patterns from frontend/src/assets/theme.ts and the
+calculator / Pokémon-input screens, implemented as original Vue
+components in this repo.

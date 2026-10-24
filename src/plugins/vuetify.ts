@@ -2,27 +2,33 @@ import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import { LAB } from '../ui/tokens'
 
 export const vuetify = createVuetify({
   theme: {
-    defaultTheme: 'camp',
+    defaultTheme: 'lab',
     themes: {
-      camp: {
+      lab: {
         dark: true,
         colors: {
-          background: '#141A22',
-          surface: '#1E2733',
-          'surface-bright': '#2A3544',
-          primary: '#E8B86D',
-          secondary: '#7EB8DA',
-          accent: '#D97B5A',
-          error: '#E57373',
-          info: '#7EB8DA',
-          success: '#81C784',
-          warning: '#E8B86D',
-          'on-background': '#F4EDE1',
-          'on-surface': '#F4EDE1',
-          'on-primary': '#1B2430'
+          background: LAB.background,
+          surface: LAB.surface,
+          'surface-bright': LAB.surfaceBright,
+          primary: LAB.primary,
+          secondary: LAB.secondary,
+          accent: LAB.accent,
+          strength: LAB.strength,
+          berry: LAB.berry,
+          ingredient: LAB.ingredient,
+          skill: LAB.skill,
+          error: LAB.primary,
+          info: LAB.accent,
+          success: LAB.energy,
+          warning: LAB.strength,
+          'on-background': LAB.onLight,
+          'on-surface': LAB.onLight,
+          'on-primary': LAB.onLight,
+          'on-secondary': LAB.onLight
         }
       }
     }
@@ -33,11 +39,13 @@ export const vuetify = createVuetify({
     sets: { mdi }
   },
   defaults: {
-    VBtn: { rounded: 'lg' },
-    VCard: { rounded: 'xl', elevation: 0 },
-    VTextField: { variant: 'outlined', density: 'comfortable', hideDetails: 'auto' },
-    VSelect: { variant: 'outlined', density: 'comfortable', hideDetails: 'auto' },
-    VSlider: { hideDetails: 'auto' },
-    VChip: { rounded: 'lg' }
+    VBtn: { rounded: 'lg', elevation: 0 },
+    VCard: { rounded: 'lg', elevation: 0 },
+    VTextField: { variant: 'outlined', density: 'compact', hideDetails: 'auto', color: 'accent' },
+    VSelect: { variant: 'outlined', density: 'compact', hideDetails: 'auto', color: 'accent' },
+    VSlider: { hideDetails: 'auto', color: 'primary' },
+    VChip: { rounded: 'lg', size: 'small' },
+    VSwitch: { color: 'primary', hideDetails: true },
+    VDialog: { scrim: 'background' }
   }
 })
