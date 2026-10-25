@@ -28,6 +28,14 @@
       <input ref="fileInput" type="file" accept="application/json" hidden @change="onImport" />
     </SettingsCard>
 
+    <SettingsCard title="文本导入" icon="mdi-text-box-plus-outline">
+      <p class="mb-3">
+        把快捷指令或实况文本复制的宝可梦详情贴进来，核对后存进这台设备的口袋。不上传截图。
+      </p>
+      <v-btn color="primary" prepend-icon="mdi-content-paste" @click="textImportOpen = true">粘贴文字</v-btn>
+      <TextImportDialog v-model="textImportOpen" />
+    </SettingsCard>
+
     <SettingsCard title="Cache Settings" icon="mdi-cached">
       <p class="mb-4">
         In case of issues please try clearing the cache. If that doesn't work, contact the developers and attach the
@@ -40,6 +48,7 @@
 </template>
 
 <script setup lang="ts">
+import TextImportDialog from '@/components/pokemon-input/TextImportDialog.vue'
 import { exportBackup, importBackup } from '@/local/persistence'
 import { UserService } from '@/services/user/user-service'
 import { clearCacheKeepLogin } from '@/stores/store-service'
@@ -68,6 +77,7 @@ const useRandomPokemonNames = computed({
 })
 
 const fileInput = ref<HTMLInputElement | null>(null)
+const textImportOpen = ref(false)
 
 function downloadBackup() {
   const backup = exportBackup()

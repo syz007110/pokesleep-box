@@ -6,7 +6,6 @@
           <v-list-item id="editButton" prepend-icon="mdi-pencil" @click="handleEditClick">Edit</v-list-item>
           <v-list-item
             id="saveButton"
-            :disabled="!userStore.loggedIn"
             :prepend-icon="savedState.state ? 'mdi-checkbox-marked-outline' : 'mdi-checkbox-blank-outline'"
             @click="save"
             >{{ savedState.state ? 'Remove from Pokebox' : 'Save to Pokebox' }}</v-list-item
@@ -27,10 +26,8 @@
 
 <script setup lang="ts">
 import { useDialogStore } from '@/stores/dialog-store/dialog-store'
-import { useUserStore } from '@/stores/user-store'
 import { ref, watch } from 'vue'
 
-const userStore = useUserStore()
 const dialogStore = useDialogStore()
 
 const savedState = ref({
