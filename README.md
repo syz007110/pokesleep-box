@@ -1,20 +1,33 @@
 # 橙花口袋本
 
-给自己用的离线优先 PWA：把《宝可梦睡眠》里的帮手记进盒子，按 Neroli's Lab / SleepAPI 的公开公式估算每天产出，再编最多 5 只的队伍。数据只存在这台设备的 IndexedDB，没有后端，也不会 Google 登录。
-
-适合 iPhone Safari → 分享 → **添加到主屏幕**。
+离线优先的《宝可梦睡眠》PWA：把 [Neroli's Lab](https://github.com/nerolis-lab/nerolis-lab) 的前端和产出模拟搬到手机上跑。没有长期后端，也不做 Google / Discord / Patreon 登录。队伍、食谱等级和设置写在本机 IndexedDB，可导出 JSON 备份。
 
 线上地址：<https://syz007110.github.io/pokesleep-box/>
 
-## 能做什么
+适合 iPhone Safari → 分享 → **添加到主屏幕**。
 
-- **盒子**：搜索、添加、编辑宝可梦（等级、性格、食材栏、主技能、副技能、睡饱饱奖章）
-- **产出**：显示间隔、白天/夜间帮忙、树果与食材、保底技能率、夜间携带与偷吃
-- **队伍**：5 个空位编队，叠加帮手奖励（最多 5 层，与速度副技能合计 35%）
-- **备份**：导出 / 导入 JSON（Safari 清缓存会丢掉盒子，请定期备份）
-- **数据包**：内置版本写在设置页；以后可填远程 JSON 覆盖图鉴，不会改用户存档
+## 现在能用的 Lab 功能
 
-本版不含最优队伍求解器。
+- **首页**：Lab 首页布局与入口
+- **计算器**：队伍栏、宝可梦输入、总览 / 队员 / 料理，以及 IV 比较。蒙特卡洛在本机主线程跑（队伍 400 次、IV 200 次；Lab 服务器默认是 5110 / 1400）
+- **比较**：多组产出对比
+- **食谱**：可改等级，存在本机（默认 60，与 Lab `defaultUserRecipes` 一致）
+- **设置 → 游戏**：区域加成、锅容量，不登录也可改
+- **设置 → 站点**：缓存清理，以及本机 JSON 备份导出 / 导入
+- **关于、鸣谢、菜品信息图、访客资料页**
+- Lab 配色、字体、精灵图
+
+界面文案大部分仍是 Lab 英文。离线说明、备份卡片和页面标题是中文。
+
+## 故意没接上的部分
+
+这些依赖 Lab 的云端，这版不跑服务器：
+
+- Google / Discord / Patreon OAuth，以及登录回调页（登录框只说明数据在本机）
+- 云端账号、队伍同步、好友、通知收件箱、管理后台
+- `/guides`（Lab 用 VitePress，路由会把这段导走）
+- 梯队页（当前 Lab 导航里也注释掉了）
+- 最优队伍求解器
 
 ## 本地运行
 
@@ -26,49 +39,52 @@ npm test
 npm run dev
 ```
 
-生产构建（GitHub 项目 Pages 需要子路径）：
+生产构建（GitHub 项目 Pages 的子路径）：
 
 ```bash
 npm run build
 npm run preview
 ```
 
-构建默认 `base` 为 `/pokesleep-box/`。本地预览若要挂在根路径，可设 `VITE_BASE=/`。
+`vite.config.ts` 的 `base` 固定为 `/pokesleep-box/`（可用环境变量 `VITE_BASE` 覆盖）。图片和字体在源码里是 `/images`、`/fonts`，构建时会改写成带这个前缀的地址，否则 Service Worker 的作用域盖不到站点根上的资源。精灵图不进预缓存（体积大约 49MB），第一次看到时用运行时 CacheFirst。
+
+## 数据存在哪
+
+Pinia 的持久化插件先写入 `localStorage`。每次 store 变更会镜像到 IndexedDB 数据库 `neroli-pocket`、对象仓库 `kv`、键 `pinia-snapshot`。启动时如果本地还没有 `team`，会从 IndexedDB 填回 `localStorage`，再创建 Pinia。
+
+设置 → 站点里的备份是 schema 2 的 JSON（`app: neroli-pocket`），导入后整页刷新。
 
 ## 结构
 
 ```
-src/
-  data/          内置数据包 pack.json 与图鉴查询
-  calc/          纯 TS 产出计算（和 UI 脱钩）
-  db/            IndexedDB：盒子、队伍、设置、数据包覆盖
-  stores/        Pinia
-  views/         盒子 / 编辑 / 队伍 / 设置
-  components/    头像、产出面板、盒子卡片
+src/                         Lab frontend（已改本地模式）
+src/local/                   本机计算器、食谱等级、IndexedDB 备份
+src/router/server-axios.ts   拦截 /api，计算器走本机模拟
+third_party/nerolis-lab/
+  common/                    sleepapi-common
+  engine/                    Lab 模拟引擎（不含数据库、路由、控制器）
+public/                      Lab 精灵、字体、PWA 图标
 ```
 
 技术栈：Vue 3 + Vite + TypeScript + Pinia + Vuetify + vite-plugin-pwa。
 
 ## GitHub Pages
 
-推到 `main` 后，`.github/workflows/deploy.yml` 会安装、测试、构建并部署 `dist/`。
+推到 `main` 后，`.github/workflows/deploy.yml` 会 `npm ci`、`npm test`、以 `VITE_BASE=/pokesleep-box/` 构建，并把 `dist/` 部署到 GitHub Pages。
 
-仓库 **Settings → Pages** 的 Source 选 **GitHub Actions**（不是 Deploy from a branch）。
-
-第一次打开若 404，先看 Actions 是否成功，以及 Pages 环境是否已创建。
+仓库 **Settings → Pages** 的 Source 保持 **GitHub Actions**。
 
 ## 在 iPhone 上安装
 
-1. 用 **Safari**（不要用微信或 Chrome）打开 <https://syz007110.github.io/pokesleep-box/>
+1. 用 **Safari** 打开 <https://syz007110.github.io/pokesleep-box/>
 2. 点底部分享按钮
-3. 选 **添加到主屏幕**，名字可改成「口袋本」
-4. 从主屏幕图标打开，即全屏 PWA
+3. 选 **添加到主屏幕**
+4. 从主屏幕图标打开
 
-第一次打开需要联网把壳和数据包拉齐。之后 Service Worker 会缓存，断网也能算。
-
-数据只存在这台 iPhone。打开应用 → **设置** → **导出备份 JSON**，存到「文件」或 iCloud。
+第一次打开需要联网拉壳和图片。之后 Service Worker 会缓存已访问的页面和看过的精灵。Safari 清网站数据会丢掉存档，请用 **设置 → 站点 → 本机备份** 导出 JSON。
 
 ## 许可
 
-- 本项目自己的代码：MIT（见 `LICENSE`）
-- 游戏数据与公式：Neroli's Lab `common/`，Apache-2.0（见 `third_party/nerolis-lab/`）
+- 本仓库自己的胶水代码：MIT（见 `LICENSE`）
+- Neroli's Lab 前端、`common/` 与模拟引擎：Apache-2.0（见 `third_party/nerolis-lab/`）
+- Chakra Petch：SIL Open Font License 1.1（字体文件在 `public/fonts/`，随 Lab 前端 public 目录一起带来）

@@ -1,0 +1,302 @@
+<template>
+  <div class="infographic-page">
+    <div class="download-controls">
+      <label class="toggle-label">
+        <input type="checkbox" v-model="showAllDishes" />
+        <span>Show All Dishes</span>
+      </label>
+      <button @click="downloadInfographic" :disabled="isDownloading" class="download-button">
+        {{ isDownloading ? 'Preparing...' : 'Download Infographic' }}
+      </button>
+    </div>
+    <div ref="infographicContainer" class="infographic-container">
+      <div class="recipe-section">
+        <div class="recipe-grid">
+          <div class="recipe-row">
+            <img :src="recipeImage(mixedCurry.name)" :alt="mixedCurry.displayName" class="mixed-recipe-image" />
+            <DishInfographicCard v-for="recipe in curries" :key="recipe.name" :recipe="recipe" />
+          </div>
+
+          <div class="recipe-row">
+            <img :src="recipeImage(mixedSalad.name)" :alt="mixedSalad.displayName" class="mixed-recipe-image" />
+            <DishInfographicCard v-for="recipe in salads" :key="recipe.name" :recipe="recipe" />
+          </div>
+
+          <div class="recipe-row">
+            <img :src="recipeImage(mixedJuice.name)" :alt="mixedJuice.displayName" class="mixed-recipe-image" />
+            <DishInfographicCard v-for="recipe in desserts" :key="recipe.name" :recipe="recipe" />
+          </div>
+        </div>
+        <div class="footer-note">
+          * The percentage values indicate the recipe bonus for each dish (i.e. the % value increase on the base
+          ingredients of the dish)
+        </div>
+      </div>
+
+      <div class="ingredient-strength-section">
+        <div v-for="ingredient in sortedIngredients" :key="ingredient.name" class="strength-item">
+          <img :src="ingredientImage(ingredient.name)" :alt="ingredient.name" class="strength-ingredient-icon" />
+          <span class="strength-value">{{ ingredient.value }} BP</span>
+        </div>
+      </div>
+      <div class="credits">
+        <span class="credits-line">original by</span>
+        <span class="credits-line">Anti</span>
+        <span class="credits-line">updated by</span>
+        <span class="credits-line">tindo</span>
+        <span class="credits-line">maintained by</span>
+        <span class="credits-line">Neroli's Lab</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { ingredientImage, recipeImage } from '@/services/utils/image-utils'
+import { curry, dessert, ingredient, RECIPES, salad } from 'sleepapi-common'
+import { computed, defineComponent, ref } from 'vue'
+import DishInfographicCard from './dish-infographic-card.vue'
+
+export default defineComponent({
+  name: 'DishInfographicPage',
+  components: {
+    DishInfographicCard
+  },
+  setup() {
+    const infographicContainer = ref<HTMLElement | null>(null)
+    const isDownloading = ref(false)
+    const showAllDishes = ref(false)
+
+    // filter out mixed recipes (they have no ingredients)
+    const recipesWithIngredients = RECIPES.filter((recipe) => recipe.ingredients.length > 0)
+
+    const curries = computed(() => {
+      const filtered = recipesWithIngredients.filter((r) => r.type === 'curry').sort((a, b) => b.value - a.value)
+      const limited = showAllDishes.value ? filtered : filtered.slice(0, 9)
+      return limited.reverse()
+    })
+
+    const salads = computed(() => {
+      const filtered = recipesWithIngredients.filter((r) => r.type === 'salad').sort((a, b) => b.value - a.value)
+      const limited = showAllDishes.value ? filtered : filtered.slice(0, 9)
+      return limited.reverse()
+    })
+
+    const desserts = computed(() => {
+      const filtered = recipesWithIngredients.filter((r) => r.type === 'dessert').sort((a, b) => b.value - a.value)
+      const limited = showAllDishes.value ? filtered : filtered.slice(0, 9)
+      return limited.reverse()
+    })
+
+    const sortedIngredients = [...ingredient.INGREDIENTS].sort((a, b) => a.value - b.value)
+
+    const mixedCurry = curry.MIXED_CURRY
+    const mixedSalad = salad.MIXED_SALAD
+    const mixedJuice = dessert.MIXED_JUICE
+
+    const downloadInfographic = async () => {
+      if (!infographicContainer.value) {
+        console.error('Infographic container not found')
+        return
+      }
+
+      isDownloading.value = true
+      try {
+        const { domToJpeg } = await import('modern-screenshot')
+        const captureWidth = infographicContainer.value.scrollWidth
+        const captureHeight = infographicContainer.value.scrollHeight
+        const image = await domToJpeg(infographicContainer.value, {
+          backgroundColor: '#1a3a3a',
+          quality: 0.9,
+          scale: 1,
+          width: captureWidth,
+          height: captureHeight,
+          timeout: 15000
+        })
+        const link = document.createElement('a')
+        link.download = 'dish-infographic.jpg'
+        link.href = image
+        link.click()
+      } catch (err) {
+        console.error('Failed to download infographic:', err)
+        alert('Failed to download infographic. Check console for details.')
+      } finally {
+        isDownloading.value = false
+      }
+    }
+
+    return {
+      curries,
+      salads,
+      desserts,
+      sortedIngredients,
+      ingredientImage,
+      recipeImage,
+      mixedCurry,
+      mixedSalad,
+      mixedJuice,
+      infographicContainer,
+      isDownloading,
+      showAllDishes,
+      downloadInfographic
+    }
+  }
+})
+</script>
+
+<style lang="scss" scoped>
+//note on all styles below: sizes are fixed based on the old infographic design
+//these are huge, fixed, unresponsive, and optimzied for download; not intended to be viewed in browser
+.infographic-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: auto;
+  width: 100%;
+  padding: 20px;
+}
+
+.download-controls {
+  margin-bottom: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+}
+
+.download-button {
+  padding: 12px 24px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #45a049;
+  }
+
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+}
+
+.infographic-container {
+  background-color: #a8d5ba;
+  background-image:
+    linear-gradient(rgba(141, 141, 141, 0.75), rgba(141, 141, 141, 0.75)), url('/images/infographics/dish-backdrop.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  width: fit-content;
+  font-family: 'Noto Sans New Tai Lue', sans-serif;
+  font-weight: 700;
+  position: relative;
+}
+
+.recipe-section {
+  padding: 50px 50px 80px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.recipe-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.recipe-row {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ingredient-strength-section {
+  padding: 50px 10px 80px;
+  flex-shrink: 0;
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 45px solid #000000;
+}
+
+.strength-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.strength-ingredient-icon {
+  width: 120px;
+  height: 72px;
+  object-fit: cover;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.strength-value {
+  font-size: 72px;
+  color: #000000;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 72px;
+  flex-shrink: 0;
+  text-align: right;
+  width: 250px;
+  line-height: 72px;
+}
+
+.footer-note {
+  position: absolute;
+  bottom: 20px;
+  left: 50px;
+  right: 50px;
+  font-size: 36px;
+  color: #000000;
+  font-style: italic;
+  text-align: right;
+}
+
+.credits {
+  position: absolute;
+  bottom: 80px;
+  left: 80px;
+  color: #222;
+  font-size: 36px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.credits-line {
+  display: block;
+  white-space: nowrap;
+}
+</style>

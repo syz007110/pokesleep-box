@@ -6,7 +6,6 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -19,8 +18,25 @@
     "types": ["vite/client", "vite-plugin-pwa/client"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@src/*": ["third_party/nerolis-lab/engine/src/*"],
+      "sleepapi-common": ["third_party/nerolis-lab/common/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "third_party/nerolis-lab/common/src/**/*.ts", "third_party/nerolis-lab/engine/src/**/*.ts"],
+  "exclude": [
+    "third_party/nerolis-lab/engine/src/app.ts",
+    "third_party/nerolis-lab/engine/src/services/admin-service",
+    "third_party/nerolis-lab/engine/src/services/api-service/team",
+    "third_party/nerolis-lab/engine/src/services/friend-service",
+    "third_party/nerolis-lab/engine/src/services/notification-service",
+    "third_party/nerolis-lab/engine/src/services/user-service",
+    "third_party/nerolis-lab/engine/src/services/worker",
+    "third_party/nerolis-lab/engine/src/utils/test-utils",
+    "third_party/nerolis-lab/engine/src/utils/database-utils",
+    "third_party/nerolis-lab/engine/src/config",
+    "third_party/nerolis-lab/engine/src/vitest",
+    "src/vitest",
+    "src/pages/tierlist"
+  ]
 }

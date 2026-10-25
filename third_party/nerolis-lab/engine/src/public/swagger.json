@@ -1,0 +1,921 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"ChangelogEntry": {
+				"properties": {
+					"commit": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"scope": {
+						"type": "string"
+					},
+					"isBreaking": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"commit",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Release": {
+				"properties": {
+					"version": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"major",
+							"minor",
+							"patch"
+						]
+					},
+					"features": {
+						"items": {
+							"$ref": "#/components/schemas/ChangelogEntry"
+						},
+						"type": "array"
+					},
+					"bugFixes": {
+						"items": {
+							"$ref": "#/components/schemas/ChangelogEntry"
+						},
+						"type": "array"
+					},
+					"breakingChanges": {
+						"items": {
+							"$ref": "#/components/schemas/ChangelogEntry"
+						},
+						"type": "array"
+					},
+					"otherChanges": {
+						"items": {
+							"$ref": "#/components/schemas/ChangelogEntry"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"version",
+					"date",
+					"type",
+					"features",
+					"bugFixes",
+					"breakingChanges",
+					"otherChanges"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Record_string._unit-string--amounts-number-Array__": {
+				"properties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"Ingredient": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"value": {
+						"type": "number",
+						"format": "double"
+					},
+					"taxedValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"longName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"value",
+					"taxedValue",
+					"longName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IngredientSet": {
+				"properties": {
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"ingredient": {
+						"$ref": "#/components/schemas/Ingredient"
+					}
+				},
+				"required": [
+					"amount",
+					"ingredient"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RecipeType": {
+				"type": "string",
+				"enum": [
+					"curry",
+					"salad",
+					"dessert"
+				]
+			},
+			"Recipe": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"displayName": {
+						"type": "string"
+					},
+					"ingredients": {
+						"items": {
+							"$ref": "#/components/schemas/IngredientSet"
+						},
+						"type": "array"
+					},
+					"value": {
+						"type": "number",
+						"format": "double"
+					},
+					"valueMax": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"$ref": "#/components/schemas/RecipeType"
+					},
+					"bonus": {
+						"type": "number",
+						"format": "double"
+					},
+					"nrOfIngredients": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"name",
+					"displayName",
+					"ingredients",
+					"value",
+					"valueMax",
+					"type",
+					"bonus",
+					"nrOfIngredients"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MealNamesQueryParams": {
+				"properties": {
+					"curry": {
+						"type": "boolean"
+					},
+					"salad": {
+						"type": "boolean"
+					},
+					"dessert": {
+						"type": "boolean"
+					},
+					"minRecipeBonus": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxPotSize": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PokemonSpecialty": {
+				"type": "string",
+				"enum": [
+					"berry",
+					"ingredient",
+					"skill",
+					"all"
+				]
+			},
+			"Berry": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"value": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"value",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GenderRatio": {
+				"properties": {
+					"male": {
+						"type": "number",
+						"format": "double"
+					},
+					"female": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"male",
+					"female"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetPokemonQueryParams": {
+				"properties": {
+					"cyan": {
+						"type": "boolean"
+					},
+					"taupe": {
+						"type": "boolean"
+					},
+					"snowdrop": {
+						"type": "boolean"
+					},
+					"lapis": {
+						"type": "boolean"
+					},
+					"powerplant": {
+						"type": "boolean"
+					},
+					"amber": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Subskill": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"shortName": {
+						"type": "string"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"rarity": {
+						"type": "string",
+						"enum": [
+							"gold",
+							"silver",
+							"white"
+						]
+					}
+				},
+				"required": [
+					"name",
+					"shortName",
+					"amount",
+					"rarity"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "nerolis-lab-backend",
+		"version": "2.7.1",
+		"contact": {}
+	},
+	"paths": {
+		"/changelog": {
+			"get": {
+				"operationId": "GetChangelog",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Release"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"changelog"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/ingredient": {
+			"get": {
+				"operationId": "GetIngredients",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"ingredient"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/mainskill/{name}": {
+			"get": {
+				"operationId": "GetMainskill",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"RP": {
+											"items": {
+												"type": "number",
+												"format": "double"
+											},
+											"type": "array"
+										},
+										"image": {
+											"type": "string"
+										},
+										"frontendComponentName": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"activationNames": {
+											"items": {
+												"type": "string"
+											},
+											"type": "array"
+										},
+										"isModified": {
+											"type": "boolean"
+										},
+										"maxLevel": {
+											"type": "number",
+											"format": "double"
+										},
+										"units": {
+											"items": {
+												"type": "string",
+												"enum": [
+													"energy",
+													"berries",
+													"berry zone",
+													"ingredients",
+													"helps",
+													"skill helps",
+													"dream shards",
+													"strength",
+													"pot size",
+													"crit chance",
+													"candy",
+													"items"
+												]
+											},
+											"type": "array"
+										},
+										"description": {
+											"type": "string"
+										},
+										"activations": {
+											"$ref": "#/components/schemas/Record_string._unit-string--amounts-number-Array__"
+										}
+									},
+									"required": [
+										"RP",
+										"image",
+										"name",
+										"activationNames",
+										"isModified",
+										"maxLevel",
+										"units",
+										"description",
+										"activations"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"mainskill"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/mainskill": {
+			"get": {
+				"operationId": "GetMainskills",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"mainskill"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/meal/{name}": {
+			"get": {
+				"operationId": "GetMealWithName",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Recipe"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"meal"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/meal": {
+			"get": {
+				"operationId": "GetMeals",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"meal",
+					"meal"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "curry",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "salad",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "dessert",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minRecipeBonus",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "maxPotSize",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/nature": {
+			"get": {
+				"operationId": "GetNatures",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"nature"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/pokemon/{name}": {
+			"get": {
+				"operationId": "GetPokemonWithName",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"shinyLocked": {
+											"type": "boolean"
+										},
+										"pityProcThreshold": {
+											"type": "number",
+											"format": "double"
+										},
+										"ingredient60": {
+											"items": {
+												"$ref": "#/components/schemas/IngredientSet"
+											},
+											"type": "array"
+										},
+										"ingredient30": {
+											"items": {
+												"$ref": "#/components/schemas/IngredientSet"
+											},
+											"type": "array"
+										},
+										"ingredient0": {
+											"items": {
+												"$ref": "#/components/schemas/IngredientSet"
+											},
+											"type": "array"
+										},
+										"evolvesInto": {
+											"items": {
+												"type": "string"
+											},
+											"type": "array"
+										},
+										"evolvesFrom": {
+											"type": "string"
+										},
+										"remainingEvolutions": {
+											"type": "number",
+											"format": "double"
+										},
+										"previousEvolutions": {
+											"type": "number",
+											"format": "double"
+										},
+										"carrySize": {
+											"type": "number",
+											"format": "double"
+										},
+										"genders": {
+											"$ref": "#/components/schemas/GenderRatio"
+										},
+										"berry": {
+											"$ref": "#/components/schemas/Berry"
+										},
+										"skillPercentage": {
+											"type": "number",
+											"format": "double"
+										},
+										"ingredientPercentage": {
+											"type": "number",
+											"format": "double"
+										},
+										"frequency": {
+											"type": "number",
+											"format": "double"
+										},
+										"specialty": {
+											"$ref": "#/components/schemas/PokemonSpecialty"
+										},
+										"pokedexNumber": {
+											"type": "number",
+											"format": "double"
+										},
+										"displayName": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"skill": {
+											"properties": {
+												"RP": {
+													"items": {
+														"type": "number",
+														"format": "double"
+													},
+													"type": "array"
+												},
+												"image": {
+													"type": "string"
+												},
+												"frontendComponentName": {
+													"type": "string"
+												},
+												"name": {
+													"type": "string"
+												},
+												"description": {
+													"type": "string"
+												},
+												"activations": {
+													"$ref": "#/components/schemas/Record_string._unit-string--amounts-number-Array__"
+												}
+											},
+											"required": [
+												"RP",
+												"image",
+												"name",
+												"description",
+												"activations"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"pityProcThreshold",
+										"ingredient60",
+										"ingredient30",
+										"ingredient0",
+										"evolvesInto",
+										"remainingEvolutions",
+										"previousEvolutions",
+										"carrySize",
+										"genders",
+										"berry",
+										"skillPercentage",
+										"ingredientPercentage",
+										"frequency",
+										"specialty",
+										"pokedexNumber",
+										"displayName",
+										"name",
+										"skill"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"pokemon"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/pokemon": {
+			"get": {
+				"operationId": "GetPokemon",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"pokemon"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "cyan",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "taupe",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "snowdrop",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lapis",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "powerplant",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "amber",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/api/subskill/{name}": {
+			"get": {
+				"operationId": "GetSubskill",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Subskill"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"subskill"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "name",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/subskill": {
+			"get": {
+				"operationId": "GetSubskills",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"subskill"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
