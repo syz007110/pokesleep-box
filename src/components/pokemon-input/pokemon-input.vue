@@ -12,7 +12,6 @@
             icon
             elevation="0"
             color="background"
-            :class="{ nudge: !userStore.loggedIn }"
             @click="toggleSave"
           >
             <v-icon v-if="pokemonInstance.saved" color="strength" size="32">mdi-bookmark</v-icon>
@@ -161,7 +160,6 @@ import PokemonName from '@/components/pokemon-input/pokemon-name.vue'
 import RibbonButton from '@/components/pokemon-input/ribbon-button.vue'
 import { useBreakpoint } from '@/composables/use-breakpoint/use-breakpoint'
 import { useTeamStore } from '@/stores/team/team-store'
-import { useUserStore } from '@/stores/user-store'
 import {
   getPokemon,
   ingredientIndex,
@@ -197,12 +195,11 @@ export default defineComponent({
   emits: ['cancel', 'save'],
   setup() {
     const teamStore = useTeamStore()
-    const userStore = useUserStore()
     const { viewportWidth } = useBreakpoint()
 
     const pokemonNameBreakpoint = 600
 
-    return { teamStore, userStore, viewportWidth, pokemonNameBreakpoint }
+    return { teamStore, viewportWidth, pokemonNameBreakpoint }
   },
   data(this: { preSelectedPokemonInstance: PokemonInstance }) {
     const { pokemon: _, ...pokemonInstanceWithoutPokemon } = this.preSelectedPokemonInstance
@@ -242,9 +239,7 @@ export default defineComponent({
   },
   methods: {
     toggleSave() {
-      if (this.userStore.loggedIn) {
-        this.pokemonInstance.saved = !this.pokemonInstance.saved
-      }
+      this.pokemonInstance.saved = !this.pokemonInstance.saved
     },
     toggleShiny() {
       if (this.pokemonInstance.pokemon.shinyLocked) {

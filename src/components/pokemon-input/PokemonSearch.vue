@@ -34,6 +34,16 @@
           size="x-small"
         />
       </v-chip-group>
+      <v-btn
+        v-if="pokemonSearchStore.showPokebox"
+        class="mr-1"
+        size="small"
+        variant="text"
+        prepend-icon="mdi-text-box-plus-outline"
+        @click="showTextImport = true"
+      >
+        文本导入
+      </v-btn>
       <v-badge v-model="pokemonSearchStore.showPokeboxBadge" dot location="top right" color="primary">
         <v-btn
           @click="handlePokeboxClick"
@@ -82,11 +92,11 @@
       >
         <div class="text-center">
           <v-icon icon="mdi-pokeball" size="48" color="grey-lighten-1" class="mb-3"></v-icon>
-          <div class="text-h6 mb-2">Your Pokebox is empty</div>
-          <div>
-            <span v-if="!userStore.loggedIn"> Please log in to save Pokémon to your Pokebox </span>
-            <span v-else> Add Pokémon from your teams to start building your personal collection </span>
-          </div>
+          <div class="text-h6 mb-2">口袋是空的</div>
+          <div class="mb-3">在队伍里点收藏，或用文本导入贴上捷径提取的文字。不用登录。</div>
+          <v-btn color="primary" variant="tonal" prepend-icon="mdi-text-box-plus-outline" @click="showTextImport = true">
+            文本导入
+          </v-btn>
         </div>
       </div>
       <v-row v-else dense class="d-flex justify-space-around mx-1">
@@ -138,6 +148,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <TextImportDialog v-model="showTextImport" @saved="loadPokebox" />
 </template>
 
 <script setup lang="ts">
@@ -149,8 +161,8 @@ import { UserService } from '@/services/user/user-service'
 import { avatarImage } from '@/services/utils/image-utils'
 import { PokemonInstanceUtils } from '@/services/utils/pokemon-instance-utils'
 import { useDialogStore } from '@/stores/dialog-store/dialog-store'
+import TextImportDialog from '@/components/pokemon-input/TextImportDialog.vue'
 import { usePokemonSearchStore } from '@/stores/pokemon-search-store'
-import { useUserStore } from '@/stores/user-store'
 import {
   capitalize,
   COMPLETE_POKEDEX,
@@ -173,8 +185,8 @@ export interface PokemonWithPath {
 }
 
 const pokemonSearchStore = usePokemonSearchStore()
-const userStore = useUserStore()
 const dialogStore = useDialogStore()
+const showTextImport = ref(false)
 
 const searchQuery = ref('')
 const selectedSpecialties = ref<PokemonSpecialty[]>([])
@@ -402,22 +414,15 @@ const handlePokeboxClick = () => {
 // Initialize temporary state from persistent state
 pokemonSearchStore.restoreFinalStageOnly()
 
-if (userStore.loggedIn) {
-  loadPokebox()
-}
-
 // Show pokebox info dialog automatically on first component open
 if (pokemonSearchStore.showPokeboxBadge) {
   showPokeboxInfo()
 }
 
-// Also watch for pokebox toggle and load data if needed
 watch(
-  () => [pokemonSearchStore.showPokebox, userStore.loggedIn],
-  async ([showPokebox, loggedIn]) => {
-    if (showPokebox && loggedIn && savedPokemon.value.length === 0) {
-      await loadPokebox()
-    }
+  () => pokemonSearchStore.showPokebox,
+  async (showPokebox) => {
+    if (showPokebox) await loadPokebox()
   },
   { immediate: true }
 )
